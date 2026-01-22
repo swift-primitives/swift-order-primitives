@@ -1,0 +1,75 @@
+// This source file is part of the Swift Institute open source project
+//
+// Copyright (c) 2025 Swift Institute and the Swift project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE.md for license information
+//
+// SPDX-License-Identifier: Apache-2.0
+
+extension Ordering {
+    /// A projection that extracts an orderable value from a root type.
+    ///
+    /// Projections can be composed and transformed before being converted
+    /// to comparators, enabling flexible ordering specifications.
+    ///
+    /// ## Creating Projections
+    ///
+    /// ```swift
+    /// let byAge = Ordering.Projection<Person, Int>(
+    ///     { $0.age },
+    ///     direction: .descending
+    /// )
+    /// ```
+    ///
+    /// ## Converting to Comparator
+    ///
+    /// ```swift
+    /// let comparator = byAge.comparator
+    /// ```
+    ///
+    /// - Note: KeyPath-based initializers are not provided because `KeyPath`
+    ///   is not `Sendable` in Swift 6. Use closure syntax instead.
+    public struct Projection<Root, Value: Comparison.`Protocol`>: Sendable {
+        /// The key extraction function.
+        @usableFromInline
+        internal let extract: @Sendable (Root) -> Value
+
+        /// The direction of ordering.
+        public let direction: Direction
+
+        /// Creates a projection with the given extractor and direction.
+        ///
+        /// - Parameters:
+        ///   - extract: A function that extracts the comparable value from
+        ///     an instance of the root type.
+        ///   - direction: The direction of ordering. Defaults to `.ascending`.
+        @inlinable
+        public init(
+            _ extract: @escaping @Sendable (Root) -> Value,
+            direction: Direction = .ascending
+        ) {
+            self.extract = extract
+            self.direction = direction
+        }
+
+        /// Returns a projection with reversed direction.
+        ///
+        /// - `.ascending` becomes `.descending`
+        /// - `.descending` becomes `.ascending`
+        @inlinable
+        public var reversed: Projection<Root, Value> {
+            Projection(extract, direction: direction.reversed)
+        }
+
+        /// Converts this projection to a comparator.
+        ///
+        /// The resulting comparator extracts the value using this projection's
+        /// extractor and compares using the projection's direction.
+        @inlinable
+        public var comparator: Ordering.Comparator<Root> {
+            let base = Ordering.Comparator<Root>.by(extract)
+            return direction == .ascending ? base : base.reversed
+        }
+    }
+}
