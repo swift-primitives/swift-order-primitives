@@ -32,15 +32,12 @@ extension Ordering.Comparator where T: Swift.Comparable {
     ///
     /// Smaller values are ordered before larger values.
     ///
-    /// - Note: Prefer conforming your type to `Comparison.Protocol` instead of
-    ///   relying on `Swift.Comparable`. `Comparison.Protocol` supports `~Copyable`
-    ///   types and uses borrowing semantics.
-    ///
     /// ```swift
     /// let comparator: Ordering.Comparator<Int> = .ascending
     /// comparator(1, 2)  // .less
     /// ```
-    @available(*, deprecated, message: "Conform to Comparison.Protocol instead of Swift.Comparable for ~Copyable support")
+    ///
+    /// - Note: For `~Copyable` types, conform to `Comparison.Protocol` instead.
     @_disfavoredOverload
     @inlinable
     public static var ascending: Ordering.Comparator<T> {
@@ -51,15 +48,12 @@ extension Ordering.Comparator where T: Swift.Comparable {
     ///
     /// Larger values are ordered before smaller values.
     ///
-    /// - Note: Prefer conforming your type to `Comparison.Protocol` instead of
-    ///   relying on `Swift.Comparable`. `Comparison.Protocol` supports `~Copyable`
-    ///   types and uses borrowing semantics.
-    ///
     /// ```swift
     /// let comparator: Ordering.Comparator<Int> = .descending
     /// comparator(1, 2)  // .greater
     /// ```
-    @available(*, deprecated, message: "Conform to Comparison.Protocol instead of Swift.Comparable for ~Copyable support")
+    ///
+    /// - Note: For `~Copyable` types, conform to `Comparison.Protocol` instead.
     @_disfavoredOverload
     @inlinable
     public static var descending: Ordering.Comparator<T> {
@@ -70,17 +64,14 @@ extension Ordering.Comparator where T: Swift.Comparable {
 extension Ordering.Comparator {
     /// Creates a comparator using a key-extracting function for `Swift.Comparable` keys.
     ///
-    /// - Note: Prefer conforming your key type to `Comparison.Protocol` instead of
-    ///   relying on `Swift.Comparable`. `Comparison.Protocol` supports `~Copyable`
-    ///   types and uses borrowing semantics.
-    ///
     /// ```swift
     /// let byAge = Ordering.Comparator<Person>.by { $0.age }
     /// ```
     ///
     /// - Parameter selector: A function that extracts the comparable key from a value.
     /// - Returns: A comparator that orders values by their extracted keys.
-    @available(*, deprecated, message: "Conform key type to Comparison.Protocol instead of Swift.Comparable for ~Copyable support")
+    ///
+    /// - Note: For `~Copyable` key types, conform them to `Comparison.Protocol` instead.
     @_disfavoredOverload
     @inlinable
     public static func by<Value: Swift.Comparable>(
