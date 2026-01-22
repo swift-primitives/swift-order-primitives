@@ -229,4 +229,51 @@ struct OrderingFluentAPITests {
             #expect(high.order.isAfter(low, by: byPriority) == true)
         }
     }
+
+    // MARK: - Standard Type Conformances
+
+    @Suite("Standard Type Conformances")
+    struct StandardTypeConformancesTests {
+        @Test("Int has .order property")
+        func intOrderable() {
+            var a = 5
+            let b = 10
+
+            // Int conforms to Comparison.Protocol, so convenience methods work
+            #expect(a.order.isBefore(b) == true)
+            #expect(a.order.isAfter(b) == false)
+        }
+
+        @Test("String has .order property with explicit comparator")
+        func stringOrderable() {
+            var apple = "apple"
+            let banana = "banana"
+
+            let comparator: Ordering.Comparator<String> = .swiftAscending
+
+            #expect(apple.order.isBefore(banana, by: comparator) == true)
+            #expect(apple.order.isAfter(banana, by: comparator) == false)
+        }
+
+        @Test("Double has .order property with explicit comparator")
+        func doubleOrderable() {
+            var a = 1.5
+            let b = 2.5
+
+            let comparator: Ordering.Comparator<Double> = .swiftAscending
+
+            #expect(a.order.isBefore(b, by: comparator) == true)
+            #expect(a.order.isAfter(b, by: comparator) == false)
+        }
+
+        @Test("UInt8 has .order property with convenience methods")
+        func uint8Orderable() {
+            var a: UInt8 = 100
+            let b: UInt8 = 200
+
+            // UInt8 conforms to Comparison.Protocol, so convenience methods work
+            #expect(a.order.isBefore(b) == true)
+            #expect(a.order.isEquivalent(to: a) == true)
+        }
+    }
 }
