@@ -28,17 +28,21 @@ extension Ordering {
     /// floatComparator(1.0, 2.0)       // .some(.less)
     /// floatComparator(Double.nan, 1.0) // nil (incomparable)
     /// ```
-    public struct PartialComparator<T>: Sendable {
+    ///
+    /// ## Move-Only Support
+    ///
+    /// Partial comparators support `~Copyable` types via `borrowing` parameters.
+    public struct PartialComparator<T: ~Copyable>: Sendable {
         /// The underlying comparison function.
         @usableFromInline
-        internal let compare: @Sendable (T, T) -> Comparison.Result?
+        internal let compare: @Sendable (borrowing T, borrowing T) -> Comparison.Result?
 
         /// Creates a partial comparator from a comparison function.
         ///
         /// - Parameter compare: A function that compares two values and returns
         ///   their relative ordering, or `nil` if they are incomparable.
         @inlinable
-        public init(_ compare: @escaping @Sendable (T, T) -> Comparison.Result?) {
+        public init(_ compare: @escaping @Sendable (borrowing T, borrowing T) -> Comparison.Result?) {
             self.compare = compare
         }
 
@@ -50,7 +54,7 @@ extension Ordering {
         /// - Returns: The comparison result indicating the relative order,
         ///   or `nil` if the values are incomparable.
         @inlinable
-        public func callAsFunction(_ lhs: T, _ rhs: T) -> Comparison.Result? {
+        public func callAsFunction(_ lhs: borrowing T, _ rhs: borrowing T) -> Comparison.Result? {
             compare(lhs, rhs)
         }
     }

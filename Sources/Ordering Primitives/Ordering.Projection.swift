@@ -30,10 +30,19 @@ extension Ordering {
     ///
     /// - Note: KeyPath-based initializers are not provided because `KeyPath`
     ///   is not `Sendable` in Swift 6. Use closure syntax instead.
-    public struct Projection<Root, Value: Comparison.`Protocol`>: Sendable {
+    ///
+    /// ## Move-Only Support
+    ///
+    /// Projections support `~Copyable` types for both root and value:
+    ///
+    /// ```swift
+    /// struct Token: ~Copyable, Comparison.Protocol { let id: Int; ... }
+    /// let byId = Ordering.Projection<Token, Token> { $0 }
+    /// ```
+    public struct Projection<Root: ~Copyable, Value: Comparison.`Protocol` & ~Copyable>: Sendable {
         /// The key extraction function.
         @usableFromInline
-        internal let extract: @Sendable (Root) -> Value
+        internal let extract: @Sendable (borrowing Root) -> Value
 
         /// The direction of ordering.
         public let direction: Direction
@@ -46,7 +55,7 @@ extension Ordering {
         ///   - direction: The direction of ordering. Defaults to `.ascending`.
         @inlinable
         public init(
-            _ extract: @escaping @Sendable (Root) -> Value,
+            _ extract: @escaping @Sendable (borrowing Root) -> Value,
             direction: Direction = .ascending
         ) {
             self.extract = extract

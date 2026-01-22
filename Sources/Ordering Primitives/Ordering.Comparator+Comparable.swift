@@ -9,7 +9,7 @@
 
 public import Comparison_Primitives
 
-extension Ordering.Comparator where T: Comparison.`Protocol` {
+extension Ordering.Comparator where T: Comparison.`Protocol` & ~Copyable {
     /// Creates a comparator using the natural ordering of a `Comparison.Protocol` type.
     ///
     /// ```swift
@@ -21,13 +21,7 @@ extension Ordering.Comparator where T: Comparison.`Protocol` {
     @inlinable
     public init() {
         self.init { lhs, rhs in
-            if lhs < rhs {
-                return .less
-            } else if lhs > rhs {
-                return .greater
-            } else {
-                return .equal
-            }
+            Comparison.Result(lhs, rhs)
         }
     }
 

@@ -7,7 +7,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-extension Ordering.Comparator {
+extension Ordering.Comparator where T: ~Copyable {
     /// Returns a comparator that uses this comparator first, then the other
     /// comparator to break ties.
     ///

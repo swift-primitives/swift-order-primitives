@@ -9,7 +9,7 @@
 
 public import Comparison_Primitives
 
-extension Ordering.Comparator {
+extension Ordering.Comparator where T: ~Copyable {
     /// Creates a comparator using a key-extracting function.
     ///
     /// The comparator extracts the key from each value and compares
@@ -27,19 +27,11 @@ extension Ordering.Comparator {
     ///   from a value.
     /// - Returns: A comparator that orders values by their extracted keys.
     @inlinable
-    public static func by<Value: Comparison.`Protocol`>(
-        _ selector: @escaping @Sendable (T) -> Value
+    public static func by<Value: Comparison.`Protocol` & ~Copyable>(
+        _ selector: @escaping @Sendable (borrowing T) -> Value
     ) -> Ordering.Comparator<T> {
         Ordering.Comparator { lhs, rhs in
-            let lhsValue = selector(lhs)
-            let rhsValue = selector(rhs)
-            if lhsValue < rhsValue {
-                return .less
-            } else if lhsValue > rhsValue {
-                return .greater
-            } else {
-                return .equal
-            }
+            Comparison.Result(selector(lhs), selector(rhs))
         }
     }
 
@@ -61,8 +53,8 @@ extension Ordering.Comparator {
     /// - Returns: A comparator that orders values by their extracted keys
     ///   using the specified comparator.
     @inlinable
-    public static func by<Value>(
-        _ selector: @escaping @Sendable (T) -> Value,
+    public static func by<Value: ~Copyable>(
+        _ selector: @escaping @Sendable (borrowing T) -> Value,
         using comparator: Ordering.Comparator<Value>
     ) -> Ordering.Comparator<T> {
         Ordering.Comparator { lhs, rhs in

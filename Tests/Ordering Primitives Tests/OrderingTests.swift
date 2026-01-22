@@ -40,7 +40,7 @@ struct OrderingTests {
         @Test("Create from closure")
         func createFromClosure() {
             let comparator = Ordering.Comparator<Int> { lhs, rhs in
-                Comparison.Result(lhs, rhs)
+                Comparison.Result(comparing: lhs, to: rhs)
             }
 
             #expect(comparator(1, 2) == .less)
@@ -50,7 +50,7 @@ struct OrderingTests {
 
         @Test("callAsFunction syntax")
         func callAsFunctionSyntax() {
-            let comparator: Ordering.Comparator<Int> = .ascending
+            let comparator: Ordering.Comparator<Int> = .swiftAscending
 
             // Can call like a function
             let result = comparator(1, 2)
@@ -58,13 +58,13 @@ struct OrderingTests {
         }
     }
 
-    // MARK: - Comparator for Comparable
+    // MARK: - Comparator for Swift.Comparable
 
-    @Suite("Comparator+Comparable")
-    struct ComparatorComparableTests {
+    @Suite("Comparator+Swift.Comparable")
+    struct ComparatorSwiftComparableTests {
         @Test("Ascending comparator")
         func ascending() {
-            let comparator: Ordering.Comparator<Int> = .ascending
+            let comparator: Ordering.Comparator<Int> = .swiftAscending
 
             #expect(comparator(1, 2) == .less)
             #expect(comparator(2, 2) == .equal)
@@ -73,16 +73,16 @@ struct OrderingTests {
 
         @Test("Descending comparator")
         func descending() {
-            let comparator: Ordering.Comparator<Int> = .descending
+            let comparator: Ordering.Comparator<Int> = .swiftDescending
 
             #expect(comparator(1, 2) == .greater)
             #expect(comparator(2, 2) == .equal)
             #expect(comparator(3, 2) == .less)
         }
 
-        @Test("Init for Comparable")
-        func initForComparable() {
-            let comparator = Ordering.Comparator<String>()
+        @Test("Init for Swift.Comparable")
+        func initForSwiftComparable() {
+            let comparator = Ordering.Comparator<String>(swift: ())
 
             #expect(comparator("apple", "banana") == .less)
             #expect(comparator("hello", "hello") == .equal)
@@ -96,7 +96,7 @@ struct OrderingTests {
     struct ComparatorReversalTests {
         @Test("Reversed comparator")
         func reversed() {
-            let ascending: Ordering.Comparator<Int> = .ascending
+            let ascending: Ordering.Comparator<Int> = .swiftAscending
             let reversed = ascending.reversed
 
             #expect(reversed(1, 2) == .greater)
@@ -106,7 +106,7 @@ struct OrderingTests {
 
         @Test("Reversal is involution")
         func reversalIsInvolution() {
-            let comparator: Ordering.Comparator<Int> = .ascending
+            let comparator: Ordering.Comparator<Int> = .swiftAscending
             let doubleReversed = comparator.reversed.reversed
 
             // Test with multiple values
@@ -127,8 +127,8 @@ struct OrderingTests {
 
         @Test("Chain with then")
         func chainWithThen() {
-            let byName = Ordering.Comparator<Person>.by { $0.name }
-            let byAge = Ordering.Comparator<Person>.by { $0.age }
+            let byName = Ordering.Comparator<Person>.swiftBy { $0.name }
+            let byAge = Ordering.Comparator<Person>.swiftBy { $0.age }
             let comparator = byName.then(byAge)
 
             let alice30 = Person(name: "Alice", age: 30)
@@ -148,12 +148,12 @@ struct OrderingTests {
         @Test("Lazy chaining with then(with:)")
         func lazyChaining() {
             let primary = Ordering.Comparator<Int> { lhs, rhs in
-                Comparison.Result(lhs, rhs)
+                Comparison.Result(comparing: lhs, to: rhs)
             }
 
             // Secondary returns descending (reversed) ordering
             let secondary: @Sendable () -> Ordering.Comparator<Int> = {
-                .descending
+                .swiftDescending
             }
 
             let chained = primary.then(with: secondary)
@@ -163,13 +163,13 @@ struct OrderingTests {
             #expect(chained(3, 2) == .greater)
 
             // Primary is equal - secondary decides
-            // For (2, 2), primary returns .equal, secondary (.descending) also returns .equal
+            // For (2, 2), primary returns .equal, secondary (.swiftDescending) also returns .equal
             #expect(chained(2, 2) == .equal)
 
             // Test where secondary would differ from primary
             // Create a chained comparator where secondary reverses
-            let chainedWithReverse = Ordering.Comparator<Int>.ascending
-                .then(with: { .descending })
+            let chainedWithReverse = Ordering.Comparator<Int>.swiftAscending
+                .then(with: { .swiftDescending })
 
             // When primary is decisive (not equal), use primary result
             #expect(chainedWithReverse(1, 2) == .less)
@@ -184,9 +184,9 @@ struct OrderingTests {
                 let z: Int
             }
 
-            let byX = Ordering.Comparator<Triple>.by { $0.x }
-            let byY = Ordering.Comparator<Triple>.by { $0.y }
-            let byZ = Ordering.Comparator<Triple>.by { $0.z }
+            let byX = Ordering.Comparator<Triple>.swiftBy { $0.x }
+            let byY = Ordering.Comparator<Triple>.swiftBy { $0.y }
+            let byZ = Ordering.Comparator<Triple>.swiftBy { $0.z }
 
             let left = byX.then(byY).then(byZ)
             let right = byX.then(byY.then(byZ))
@@ -216,7 +216,7 @@ struct OrderingTests {
 
         @Test("By selector")
         func bySelector() {
-            let byAge = Ordering.Comparator<Person>.by { $0.age }
+            let byAge = Ordering.Comparator<Person>.swiftBy { $0.age }
 
             let alice30 = Person(name: "Alice", age: 30)
             let bob25 = Person(name: "Bob", age: 25)
@@ -229,7 +229,7 @@ struct OrderingTests {
         func bySelectorWithComparator() {
             let byAgeDescending = Ordering.Comparator<Person>.by(
                 { $0.age },
-                using: .descending
+                using: .swiftDescending
             )
 
             let alice30 = Person(name: "Alice", age: 30)
@@ -242,8 +242,8 @@ struct OrderingTests {
         @Test("Complex composition")
         func complexComposition() {
             let comparator = Ordering.Comparator<Person>
-                .by { $0.name }
-                .then(.by { $0.age }.reversed)
+                .swiftBy { $0.name }
+                .then(Ordering.Comparator<Person>.swiftBy { $0.age }.reversed)
 
             let alice30 = Person(name: "Alice", age: 30)
             let alice25 = Person(name: "Alice", age: 25)
@@ -258,52 +258,6 @@ struct OrderingTests {
         }
     }
 
-    // MARK: - Projection
-
-    @Suite("Projection")
-    struct ProjectionTests {
-        struct Person {
-            let name: String
-            let age: Int
-        }
-
-        @Test("Create projection")
-        func createProjection() {
-            let projection = Ordering.Projection<Person, Int>(
-                { $0.age },
-                direction: .ascending
-            )
-
-            #expect(projection.direction == .ascending)
-        }
-
-        @Test("Reversed projection")
-        func reversedProjection() {
-            let projection = Ordering.Projection<Person, Int>(
-                { $0.age },
-                direction: .ascending
-            )
-            let reversed = projection.reversed
-
-            #expect(reversed.direction == .descending)
-        }
-
-        @Test("Convert to comparator")
-        func convertToComparator() {
-            let ascending = Ordering.Projection<Person, Int>(
-                { $0.age },
-                direction: .ascending
-            )
-            let descending = ascending.reversed
-
-            let alice30 = Person(name: "Alice", age: 30)
-            let bob25 = Person(name: "Bob", age: 25)
-
-            #expect(ascending.comparator(alice30, bob25) == .greater)
-            #expect(descending.comparator(alice30, bob25) == .less)
-        }
-    }
-
     // MARK: - PartialComparator
 
     @Suite("PartialComparator")
@@ -314,7 +268,7 @@ struct OrderingTests {
                 if lhs.isNaN || rhs.isNaN {
                     return nil
                 }
-                return Comparison.Result(lhs, rhs)
+                return Comparison.Result(comparing: lhs, to: rhs)
             }
 
             #expect(comparator(1.0, 2.0) == .less)
@@ -328,12 +282,76 @@ struct OrderingTests {
                 if lhs.isNaN || rhs.isNaN {
                     return nil
                 }
-                return Comparison.Result(lhs, rhs)
+                return Comparison.Result(comparing: lhs, to: rhs)
             }
 
             #expect(comparator(Double.nan, 1.0) == nil)
             #expect(comparator(1.0, Double.nan) == nil)
             #expect(comparator(Double.nan, Double.nan) == nil)
+        }
+    }
+
+    // MARK: - ~Copyable Support
+
+    @Suite("NonCopyable Support")
+    struct NonCopyableSupportTests {
+        struct Token: ~Copyable, Comparison.`Protocol` {
+            let id: Int
+
+            static func < (lhs: borrowing Token, rhs: borrowing Token) -> Bool {
+                lhs.id < rhs.id
+            }
+
+            static func == (lhs: borrowing Token, rhs: borrowing Token) -> Bool {
+                lhs.id == rhs.id
+            }
+        }
+
+        @Test("Comparator with ~Copyable type")
+        func comparatorWithNonCopyable() {
+            let comparator = Ordering.Comparator<Token> { lhs, rhs in
+                Comparison.Result(lhs, rhs)
+            }
+
+            let a = Token(id: 1)
+            let b = Token(id: 2)
+            let c = Token(id: 1)
+
+            #expect(comparator(a, b) == .less)
+            #expect(comparator(b, a) == .greater)
+            #expect(comparator(a, c) == .equal)
+        }
+
+        @Test("Natural ordering for Comparison.Protocol types")
+        func naturalOrdering() {
+            let comparator: Ordering.Comparator<Token> = .ascending
+
+            let a = Token(id: 5)
+            let b = Token(id: 10)
+
+            #expect(comparator(a, b) == .less)
+            #expect(comparator(b, a) == .greater)
+        }
+
+        @Test("Key extraction with ~Copyable")
+        func keyExtractionWithNonCopyable() {
+            struct Container: ~Copyable {
+                let token: Token
+
+                init(tokenId: Int) {
+                    self.token = Token(id: tokenId)
+                }
+            }
+
+            let byToken = Ordering.Comparator<Container>.by(
+                { Comparison.Result(comparing: $0.token.id, to: 0).isGreater ? $0.token.id : 0 },
+                using: .swiftAscending
+            )
+
+            let a = Container(tokenId: 5)
+            let b = Container(tokenId: 10)
+
+            #expect(byToken(a, b) == .less)
         }
     }
 
@@ -349,7 +367,7 @@ struct OrderingTests {
                 }
             }
 
-            let comparator: Ordering.Comparator<Int> = .ascending
+            let comparator: Ordering.Comparator<Int> = .swiftAscending
             let actor = TestActor()
             let result = await actor.compare(with: comparator)
             #expect(result == .less)
@@ -367,29 +385,6 @@ struct OrderingTests {
             await actor.set(.descending)
             let result = await actor.get()
             #expect(result == .descending)
-        }
-
-        @Test("Projection is Sendable")
-        func projectionIsSendable() async {
-            struct Person {
-                let age: Int
-            }
-
-            actor TestActor {
-                func getComparator(
-                    from projection: Ordering.Projection<Person, Int>
-                ) -> Ordering.Comparator<Person> {
-                    projection.comparator
-                }
-            }
-
-            let projection = Ordering.Projection<Person, Int>({ $0.age })
-            let actor = TestActor()
-            let comparator = await actor.getComparator(from: projection)
-
-            let alice = Person(age: 30)
-            let bob = Person(age: 25)
-            #expect(comparator(alice, bob) == .greater)
         }
     }
 }

@@ -47,17 +47,29 @@ extension Ordering {
     ///
     /// All comparators are `Sendable` and safe for concurrent use across
     /// actor boundaries.
-    public struct Comparator<T>: Sendable {
+    ///
+    /// ## Move-Only Support
+    ///
+    /// Comparators support `~Copyable` types via `borrowing` parameters:
+    ///
+    /// ```swift
+    /// struct Token: ~Copyable { let id: Int }
+    ///
+    /// let comparator = Ordering.Comparator<Token> { lhs, rhs in
+    ///     Comparison.Result(comparing: lhs.id, to: rhs.id)
+    /// }
+    /// ```
+    public struct Comparator<T: ~Copyable>: Sendable {
         /// The underlying comparison function.
         @usableFromInline
-        internal let compare: @Sendable (T, T) -> Comparison.Result
+        internal let compare: @Sendable (borrowing T, borrowing T) -> Comparison.Result
 
         /// Creates a comparator from a comparison function.
         ///
         /// - Parameter compare: A function that compares two values and returns
         ///   their relative ordering.
         @inlinable
-        public init(_ compare: @escaping @Sendable (T, T) -> Comparison.Result) {
+        public init(_ compare: @escaping @Sendable (borrowing T, borrowing T) -> Comparison.Result) {
             self.compare = compare
         }
 
@@ -68,7 +80,7 @@ extension Ordering {
         ///   - rhs: The second value to compare.
         /// - Returns: The comparison result indicating the relative order.
         @inlinable
-        public func callAsFunction(_ lhs: T, _ rhs: T) -> Comparison.Result {
+        public func callAsFunction(_ lhs: borrowing T, _ rhs: borrowing T) -> Comparison.Result {
             compare(lhs, rhs)
         }
     }

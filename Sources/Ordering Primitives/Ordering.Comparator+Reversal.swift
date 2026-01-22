@@ -7,7 +7,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-extension Ordering.Comparator {
+extension Ordering.Comparator where T: ~Copyable {
     /// Returns a comparator with reversed ordering.
     ///
     /// Elements that were ordered as less become greater, and vice versa.
