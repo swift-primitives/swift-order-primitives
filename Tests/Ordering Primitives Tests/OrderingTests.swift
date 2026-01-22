@@ -50,7 +50,7 @@ struct OrderingTests {
 
         @Test("callAsFunction syntax")
         func callAsFunctionSyntax() {
-            let comparator: Ordering.Comparator<Int> = .swiftAscending
+            let comparator: Ordering.Comparator<Int> = .ascending
 
             // Can call like a function
             let result = comparator(1, 2)
@@ -64,7 +64,7 @@ struct OrderingTests {
     struct ComparatorSwiftComparableTests {
         @Test("Ascending comparator")
         func ascending() {
-            let comparator: Ordering.Comparator<Int> = .swiftAscending
+            let comparator: Ordering.Comparator<Int> = .ascending
 
             #expect(comparator(1, 2) == .less)
             #expect(comparator(2, 2) == .equal)
@@ -73,7 +73,7 @@ struct OrderingTests {
 
         @Test("Descending comparator")
         func descending() {
-            let comparator: Ordering.Comparator<Int> = .swiftDescending
+            let comparator: Ordering.Comparator<Int> = .descending
 
             #expect(comparator(1, 2) == .greater)
             #expect(comparator(2, 2) == .equal)
@@ -96,7 +96,7 @@ struct OrderingTests {
     struct ComparatorReversalTests {
         @Test("Reversed comparator")
         func reversed() {
-            let ascending: Ordering.Comparator<Int> = .swiftAscending
+            let ascending: Ordering.Comparator<Int> = .ascending
             let reversed = ascending.reversed
 
             #expect(reversed(1, 2) == .greater)
@@ -106,7 +106,7 @@ struct OrderingTests {
 
         @Test("Reversal is involution")
         func reversalIsInvolution() {
-            let comparator: Ordering.Comparator<Int> = .swiftAscending
+            let comparator: Ordering.Comparator<Int> = .ascending
             let doubleReversed = comparator.reversed.reversed
 
             // Test with multiple values
@@ -127,8 +127,8 @@ struct OrderingTests {
 
         @Test("Chain with then")
         func chainWithThen() {
-            let byName = Ordering.Comparator<Person>.swiftBy { $0.name }
-            let byAge = Ordering.Comparator<Person>.swiftBy { $0.age }
+            let byName = Ordering.Comparator<Person>.by { $0.name }
+            let byAge = Ordering.Comparator<Person>.by { $0.age }
             let comparator = byName.then(byAge)
 
             let alice30 = Person(name: "Alice", age: 30)
@@ -153,7 +153,7 @@ struct OrderingTests {
 
             // Secondary returns descending (reversed) ordering
             let secondary: @Sendable () -> Ordering.Comparator<Int> = {
-                .swiftDescending
+                .descending
             }
 
             let chained = primary.then(with: secondary)
@@ -163,13 +163,13 @@ struct OrderingTests {
             #expect(chained(3, 2) == .greater)
 
             // Primary is equal - secondary decides
-            // For (2, 2), primary returns .equal, secondary (.swiftDescending) also returns .equal
+            // For (2, 2), primary returns .equal, secondary (descending) also returns .equal
             #expect(chained(2, 2) == .equal)
 
             // Test where secondary would differ from primary
             // Create a chained comparator where secondary reverses
-            let chainedWithReverse = Ordering.Comparator<Int>.swiftAscending
-                .then(with: { .swiftDescending })
+            let chainedWithReverse = Ordering.Comparator<Int>.ascending
+                .then(with: { .descending })
 
             // When primary is decisive (not equal), use primary result
             #expect(chainedWithReverse(1, 2) == .less)
@@ -184,9 +184,9 @@ struct OrderingTests {
                 let z: Int
             }
 
-            let byX = Ordering.Comparator<Triple>.swiftBy { $0.x }
-            let byY = Ordering.Comparator<Triple>.swiftBy { $0.y }
-            let byZ = Ordering.Comparator<Triple>.swiftBy { $0.z }
+            let byX = Ordering.Comparator<Triple>.by { $0.x }
+            let byY = Ordering.Comparator<Triple>.by { $0.y }
+            let byZ = Ordering.Comparator<Triple>.by { $0.z }
 
             let left = byX.then(byY).then(byZ)
             let right = byX.then(byY.then(byZ))
@@ -216,7 +216,7 @@ struct OrderingTests {
 
         @Test("By selector")
         func bySelector() {
-            let byAge = Ordering.Comparator<Person>.swiftBy { $0.age }
+            let byAge = Ordering.Comparator<Person>.by { $0.age }
 
             let alice30 = Person(name: "Alice", age: 30)
             let bob25 = Person(name: "Bob", age: 25)
@@ -229,7 +229,7 @@ struct OrderingTests {
         func bySelectorWithComparator() {
             let byAgeDescending = Ordering.Comparator<Person>.by(
                 { $0.age },
-                using: .swiftDescending
+                using: .descending
             )
 
             let alice30 = Person(name: "Alice", age: 30)
@@ -242,8 +242,8 @@ struct OrderingTests {
         @Test("Complex composition")
         func complexComposition() {
             let comparator = Ordering.Comparator<Person>
-                .swiftBy { $0.name }
-                .then(Ordering.Comparator<Person>.swiftBy { $0.age }.reversed)
+                .by { $0.name }
+                .then(Ordering.Comparator<Person>.by { $0.age }.reversed)
 
             let alice30 = Person(name: "Alice", age: 30)
             let alice25 = Person(name: "Alice", age: 25)
@@ -345,7 +345,7 @@ struct OrderingTests {
 
             let byToken = Ordering.Comparator<Container>.by(
                 { Comparison.Result(comparing: $0.token.id, to: 0).isGreater ? $0.token.id : 0 },
-                using: .swiftAscending
+                using: .ascending
             )
 
             let a = Container(tokenId: 5)
@@ -367,7 +367,7 @@ struct OrderingTests {
                 }
             }
 
-            let comparator: Ordering.Comparator<Int> = .swiftAscending
+            let comparator: Ordering.Comparator<Int> = .ascending
             let actor = TestActor()
             let result = await actor.compare(with: comparator)
             #expect(result == .less)

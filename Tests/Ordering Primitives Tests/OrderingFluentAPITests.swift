@@ -249,7 +249,7 @@ struct OrderingFluentAPITests {
             var apple = "apple"
             let banana = "banana"
 
-            let comparator: Ordering.Comparator<String> = .swiftAscending
+            let comparator: Ordering.Comparator<String> = .ascending
 
             #expect(apple.order.isBefore(banana, by: comparator) == true)
             #expect(apple.order.isAfter(banana, by: comparator) == false)
@@ -260,7 +260,7 @@ struct OrderingFluentAPITests {
             var a = 1.5
             let b = 2.5
 
-            let comparator: Ordering.Comparator<Double> = .swiftAscending
+            let comparator: Ordering.Comparator<Double> = .ascending
 
             #expect(a.order.isBefore(b, by: comparator) == true)
             #expect(a.order.isAfter(b, by: comparator) == false)
