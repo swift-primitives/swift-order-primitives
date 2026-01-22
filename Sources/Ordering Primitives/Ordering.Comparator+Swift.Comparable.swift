@@ -24,7 +24,7 @@ extension Ordering.Comparator where T: Swift.Comparable {
     @inlinable
     public init(swift: Void) {
         self.init { lhs, rhs in
-            Comparison.Result(comparing: lhs, to: rhs)
+            Comparison(comparing: lhs, to: rhs)
         }
     }
 
@@ -78,7 +78,7 @@ extension Ordering.Comparator {
         _ selector: @escaping @Sendable (borrowing T) -> Value
     ) -> Ordering.Comparator<T> {
         Ordering.Comparator { lhs, rhs in
-            Comparison.Result(comparing: selector(lhs), to: selector(rhs))
+            Comparison(comparing: selector(lhs), to: selector(rhs))
         }
     }
 }

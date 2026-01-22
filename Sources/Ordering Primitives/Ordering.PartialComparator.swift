@@ -22,7 +22,7 @@ extension Ordering {
     /// ```swift
     /// let floatComparator = Ordering.PartialComparator<Double> { lhs, rhs in
     ///     guard !lhs.isNaN && !rhs.isNaN else { return nil }
-    ///     return Comparison.Result(lhs, rhs)
+    ///     return Comparison(lhs, rhs)
     /// }
     ///
     /// floatComparator(1.0, 2.0)       // .some(.less)
@@ -35,14 +35,14 @@ extension Ordering {
     public struct PartialComparator<T: ~Copyable>: Sendable {
         /// The underlying comparison function.
         @usableFromInline
-        internal let compare: @Sendable (borrowing T, borrowing T) -> Comparison.Result?
+        internal let compare: @Sendable (borrowing T, borrowing T) -> Comparison?
 
         /// Creates a partial comparator from a comparison function.
         ///
         /// - Parameter compare: A function that compares two values and returns
         ///   their relative ordering, or `nil` if they are incomparable.
         @inlinable
-        public init(_ compare: @escaping @Sendable (borrowing T, borrowing T) -> Comparison.Result?) {
+        public init(_ compare: @escaping @Sendable (borrowing T, borrowing T) -> Comparison?) {
             self.compare = compare
         }
 
@@ -54,7 +54,7 @@ extension Ordering {
         /// - Returns: The comparison result indicating the relative order,
         ///   or `nil` if the values are incomparable.
         @inlinable
-        public func callAsFunction(_ lhs: borrowing T, _ rhs: borrowing T) -> Comparison.Result? {
+        public func callAsFunction(_ lhs: borrowing T, _ rhs: borrowing T) -> Comparison? {
             compare(lhs, rhs)
         }
     }

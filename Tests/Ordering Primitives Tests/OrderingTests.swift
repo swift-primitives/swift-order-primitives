@@ -40,7 +40,7 @@ struct OrderingTests {
         @Test("Create from closure")
         func createFromClosure() {
             let comparator = Ordering.Comparator<Int> { lhs, rhs in
-                Comparison.Result(comparing: lhs, to: rhs)
+                Comparison(comparing: lhs, to: rhs)
             }
 
             #expect(comparator(1, 2) == .less)
@@ -148,7 +148,7 @@ struct OrderingTests {
         @Test("Lazy chaining with then(with:)")
         func lazyChaining() {
             let primary = Ordering.Comparator<Int> { lhs, rhs in
-                Comparison.Result(comparing: lhs, to: rhs)
+                Comparison(comparing: lhs, to: rhs)
             }
 
             // Secondary returns descending (reversed) ordering
@@ -268,7 +268,7 @@ struct OrderingTests {
                 if lhs.isNaN || rhs.isNaN {
                     return nil
                 }
-                return Comparison.Result(comparing: lhs, to: rhs)
+                return Comparison(comparing: lhs, to: rhs)
             }
 
             #expect(comparator(1.0, 2.0) == .less)
@@ -282,7 +282,7 @@ struct OrderingTests {
                 if lhs.isNaN || rhs.isNaN {
                     return nil
                 }
-                return Comparison.Result(comparing: lhs, to: rhs)
+                return Comparison(comparing: lhs, to: rhs)
             }
 
             #expect(comparator(Double.nan, 1.0) == nil)
@@ -310,7 +310,7 @@ struct OrderingTests {
         @Test("Comparator with ~Copyable type")
         func comparatorWithNonCopyable() {
             let comparator = Ordering.Comparator<Token> { lhs, rhs in
-                Comparison.Result(lhs, rhs)
+                Comparison(lhs, rhs)
             }
 
             let a = Token(id: 1)
@@ -344,7 +344,7 @@ struct OrderingTests {
             }
 
             let byToken = Ordering.Comparator<Container>.by(
-                { Comparison.Result(comparing: $0.token.id, to: 0).isGreater ? $0.token.id : 0 },
+                { Comparison(comparing: $0.token.id, to: 0).isGreater ? $0.token.id : 0 },
                 using: .ascending
             )
 
@@ -362,7 +362,7 @@ struct OrderingTests {
         @Test("Comparator is Sendable")
         func comparatorIsSendable() async {
             actor TestActor {
-                func compare(with comparator: Ordering.Comparator<Int>) -> Comparison.Result {
+                func compare(with comparator: Ordering.Comparator<Int>) -> Comparison {
                     comparator(1, 2)
                 }
             }

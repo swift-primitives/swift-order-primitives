@@ -36,7 +36,7 @@ struct OrderingFluentAPITests {
             var bob = Person(name: "Bob", age: 25)
 
             let byAge = Ordering.Comparator<Person> { lhs, rhs in
-                Comparison.Result(comparing: lhs.age, to: rhs.age)
+                Comparison(comparing: lhs.age, to: rhs.age)
             }
 
             #expect(alice.order.isBefore(bob, by: byAge) == false)  // 30 > 25
@@ -49,7 +49,7 @@ struct OrderingFluentAPITests {
             var bob = Person(name: "Bob", age: 25)
 
             let byAge = Ordering.Comparator<Person> { lhs, rhs in
-                Comparison.Result(comparing: lhs.age, to: rhs.age)
+                Comparison(comparing: lhs.age, to: rhs.age)
             }
 
             #expect(alice.order.isAfter(bob, by: byAge) == true)   // 30 > 25
@@ -63,7 +63,7 @@ struct OrderingFluentAPITests {
             let bob = Person(name: "Bob", age: 25)
 
             let byAge = Ordering.Comparator<Person> { lhs, rhs in
-                Comparison.Result(comparing: lhs.age, to: rhs.age)
+                Comparison(comparing: lhs.age, to: rhs.age)
             }
 
             #expect(alice.order.isEquivalent(to: carol, by: byAge) == true)   // same age
@@ -76,10 +76,10 @@ struct OrderingFluentAPITests {
             let bob = Person(name: "Bob", age: 25)
 
             let byAge = Ordering.Comparator<Person> { lhs, rhs in
-                Comparison.Result(comparing: lhs.age, to: rhs.age)
+                Comparison(comparing: lhs.age, to: rhs.age)
             }
             let byName = Ordering.Comparator<Person> { lhs, rhs in
-                Comparison.Result(comparing: lhs.name, to: rhs.name)
+                Comparison(comparing: lhs.name, to: rhs.name)
             }
 
             // By age: Alice(30) is after Bob(25)
@@ -207,7 +207,7 @@ struct OrderingFluentAPITests {
             let other = SimpleValue(x: 5)
 
             let comparator = Ordering.Comparator<SimpleValue> { lhs, rhs in
-                Comparison.Result(comparing: lhs.x, to: rhs.x)
+                Comparison(comparing: lhs.x, to: rhs.x)
             }
 
             #expect(value.order.isAfter(other, by: comparator) == true)
@@ -223,7 +223,7 @@ struct OrderingFluentAPITests {
             let low = Resource(priority: 1)
 
             let byPriority = Ordering.Comparator<Resource> { lhs, rhs in
-                Comparison.Result(comparing: lhs.priority, to: rhs.priority)
+                Comparison(comparing: lhs.priority, to: rhs.priority)
             }
 
             #expect(high.order.isAfter(low, by: byPriority) == true)

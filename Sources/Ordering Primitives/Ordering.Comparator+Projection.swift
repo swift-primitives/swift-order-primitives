@@ -31,7 +31,7 @@ extension Ordering.Comparator where T: ~Copyable {
         _ selector: @escaping @Sendable (borrowing T) -> Value
     ) -> Ordering.Comparator<T> {
         Ordering.Comparator { lhs, rhs in
-            Comparison.Result(selector(lhs), selector(rhs))
+            Comparison(selector(lhs), selector(rhs))
         }
     }
 

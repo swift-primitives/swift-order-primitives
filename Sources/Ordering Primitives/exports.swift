@@ -8,5 +8,5 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /// Re-exports Comparison Primitives so that consumers of Ordering Primitives
-/// have access to `Comparison.Result` without a separate import.
+/// have access to `Comparison` without a separate import.
 @_exported public import Comparison_Primitives

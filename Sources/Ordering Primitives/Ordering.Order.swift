@@ -22,7 +22,7 @@ extension Ordering {
     /// }
     ///
     /// let byAge = Ordering.Comparator<Person> { lhs, rhs in
-    ///     Comparison.Result(comparing: lhs.age, to: rhs.age)
+    ///     Comparison(comparing: lhs.age, to: rhs.age)
     /// }
     ///
     /// var alice = Person(name: "Alice", age: 30)

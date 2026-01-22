@@ -21,7 +21,7 @@ extension Ordering.Comparator where T: Comparison.`Protocol` & ~Copyable {
     @inlinable
     public init() {
         self.init { lhs, rhs in
-            Comparison.Result(lhs, rhs)
+            Comparison(lhs, rhs)
         }
     }
 
