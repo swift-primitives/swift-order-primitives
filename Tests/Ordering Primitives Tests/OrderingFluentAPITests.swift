@@ -276,4 +276,49 @@ struct OrderingFluentAPITests {
             #expect(a.order.isEquivalent(to: a) == true)
         }
     }
+
+    // MARK: - Swift.Comparable Convenience Methods
+
+    @Suite("Swift.Comparable Convenience")
+    struct SwiftComparableConvenienceTests {
+        @Test("String has convenience methods without explicit comparator")
+        func stringConvenience() {
+            var apple = "apple"
+            let banana = "banana"
+
+            // String now has convenience methods via Swift.Comparable extension
+            #expect(apple.order.isBefore(banana) == true)
+            #expect(apple.order.isAfter(banana) == false)
+            #expect(apple.order.isEquivalent(to: "apple") == true)
+        }
+
+        @Test("Double has convenience methods without explicit comparator")
+        func doubleConvenience() {
+            var a = 1.5
+            let b = 2.5
+
+            // Double now has convenience methods via Swift.Comparable extension
+            #expect(a.order.isBefore(b) == true)
+            #expect(a.order.isAfter(b) == false)
+            #expect(a.order.isEquivalent(to: 1.5) == true)
+        }
+
+        @Test("Float has convenience methods")
+        func floatConvenience() {
+            var a: Float = 3.14
+            let b: Float = 2.71
+
+            #expect(a.order.isBefore(b) == false)
+            #expect(a.order.isAfter(b) == true)
+        }
+
+        @Test("Character has convenience methods")
+        func characterConvenience() {
+            var a: Character = "a"
+            let z: Character = "z"
+
+            #expect(a.order.isBefore(z) == true)
+            #expect(a.order.isAfter(z) == false)
+        }
+    }
 }
