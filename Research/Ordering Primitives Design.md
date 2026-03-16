@@ -1,4 +1,11 @@
 # Ordering Primitives: Comparators, Combinators, and Projections
+<!--
+---
+version: 1.0.0
+last_updated: 2026-01-22
+status: RECOMMENDATION
+---
+-->
 
 **swift-ordering-primitives**
 
