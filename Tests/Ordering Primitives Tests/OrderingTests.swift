@@ -264,7 +264,7 @@ struct OrderingTests {
     struct PartialComparatorTests {
         @Test("Returns result for comparable values")
         func returnsResult() {
-            let comparator = Ordering.PartialComparator<Double> { lhs, rhs in
+            let comparator = Ordering.Comparator<Double>.Partial { lhs, rhs in
                 if lhs.isNaN || rhs.isNaN {
                     return nil
                 }
@@ -278,7 +278,7 @@ struct OrderingTests {
 
         @Test("Returns nil for incomparable values")
         func returnsNil() {
-            let comparator = Ordering.PartialComparator<Double> { lhs, rhs in
+            let comparator = Ordering.Comparator<Double>.Partial { lhs, rhs in
                 if lhs.isNaN || rhs.isNaN {
                     return nil
                 }

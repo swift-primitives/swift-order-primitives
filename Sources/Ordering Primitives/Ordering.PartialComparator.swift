@@ -9,10 +9,10 @@
 
 public import Comparison_Primitives
 
-extension Ordering {
+extension Ordering.Comparator {
     /// A comparator for partially ordered types.
     ///
-    /// Unlike ``Comparator`` which always returns a result, `PartialComparator`
+    /// Unlike ``Ordering/Comparator`` which always returns a result, `Partial`
     /// returns `nil` when two values are incomparable. This is useful for
     /// types with partial orders, such as floating-point numbers where
     /// NaN is incomparable with any value.
@@ -20,19 +20,19 @@ extension Ordering {
     /// ## Example
     ///
     /// ```swift
-    /// let floatComparator = Ordering.PartialComparator<Double> { lhs, rhs in
+    /// let comparator = Ordering.Comparator<Double>.Partial { lhs, rhs in
     ///     guard !lhs.isNaN && !rhs.isNaN else { return nil }
     ///     return Comparison(lhs, rhs)
     /// }
     ///
-    /// floatComparator(1.0, 2.0)       // .some(.less)
-    /// floatComparator(Double.nan, 1.0) // nil (incomparable)
+    /// comparator(1.0, 2.0)       // .some(.less)
+    /// comparator(Double.nan, 1.0) // nil (incomparable)
     /// ```
     ///
     /// ## Move-Only Support
     ///
     /// Partial comparators support `~Copyable` types via `borrowing` parameters.
-    public struct PartialComparator<T: ~Copyable>: Sendable {
+    public struct Partial: Sendable {
         /// The underlying comparison function.
         @usableFromInline
         internal let compare: @Sendable (borrowing T, borrowing T) -> Comparison?

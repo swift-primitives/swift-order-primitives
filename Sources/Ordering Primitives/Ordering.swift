@@ -18,7 +18,7 @@
 /// - ``Ordering/Direction``: Ascending or descending order
 /// - ``Ordering/Comparator``: A reified comparator function
 /// - ``Ordering/Projection``: Key-based ordering specification
-/// - ``Ordering/PartialComparator``: Comparator for partial orders
+/// - ``Ordering/Comparator/Partial``: Comparator for partial orders
 ///
 /// ## Fluent APIs
 ///
