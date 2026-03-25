@@ -20,6 +20,7 @@ extension Ordering.Comparator where T: Comparison.`Protocol` & ~Copyable {
     /// ```
     @inlinable
     public init() {
+        nonisolated(unsafe) let _: T.Type = T.self
         self.init { lhs, rhs in
             Comparison(lhs, rhs)
         }

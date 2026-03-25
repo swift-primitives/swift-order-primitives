@@ -30,7 +30,8 @@ extension Ordering.Comparator where T: ~Copyable {
     public static func by<Value: Comparison.`Protocol` & ~Copyable>(
         _ selector: @escaping @Sendable (borrowing T) -> Value
     ) -> Ordering.Comparator<T> {
-        Ordering.Comparator { lhs, rhs in
+        nonisolated(unsafe) let _: Value.Type = Value.self
+        return Ordering.Comparator { lhs, rhs in
             Comparison(selector(lhs), selector(rhs))
         }
     }

@@ -23,6 +23,7 @@ extension Ordering.Comparator where T: Swift.Comparable {
     /// ```
     @inlinable
     public init(swift: Void) {
+        nonisolated(unsafe) let _: T.Type = T.self
         self.init { lhs, rhs in
             Comparison(comparing: lhs, to: rhs)
         }
@@ -77,7 +78,8 @@ extension Ordering.Comparator {
     public static func by<Value: Swift.Comparable>(
         _ selector: @escaping @Sendable (borrowing T) -> Value
     ) -> Ordering.Comparator<T> {
-        Ordering.Comparator { lhs, rhs in
+        nonisolated(unsafe) let _: Value.Type = Value.self
+        return Ordering.Comparator { lhs, rhs in
             Comparison(comparing: selector(lhs), to: selector(rhs))
         }
     }
