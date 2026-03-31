@@ -9,6 +9,32 @@
 
 public import Comparison_Primitives
 
+// SE-0499: Swift.Comparable no longer implies Copyable in Swift 6.4.
+// Without ~Copyable, the extension gains implicit `where T: Copyable` on 6.4,
+// making it unreachable for ~Copyable associated types (e.g., Collection.Protocol.Element).
+#if compiler(>=6.4)
+extension Ordering.Comparator where T: Swift.Comparable & ~Copyable {
+    @inlinable
+    public init(swift: Void) {
+        nonisolated(unsafe) let _: T.Type = T.self
+        self.init { lhs, rhs in
+            Comparison(comparing: lhs, to: rhs)
+        }
+    }
+
+    @_disfavoredOverload
+    @inlinable
+    public static var ascending: Ordering.Comparator<T> {
+        Ordering.Comparator(swift: ())
+    }
+
+    @_disfavoredOverload
+    @inlinable
+    public static var descending: Ordering.Comparator<T> {
+        Ordering.Comparator(swift: ()).reversed
+    }
+}
+#else
 extension Ordering.Comparator where T: Swift.Comparable {
     /// Creates a comparator using the natural ordering of a `Swift.Comparable` type.
     ///
@@ -61,6 +87,7 @@ extension Ordering.Comparator where T: Swift.Comparable {
         Ordering.Comparator(swift: ()).reversed
     }
 }
+#endif
 
 extension Ordering.Comparator {
     /// Creates a comparator using a key-extracting function for `Swift.Comparable` keys.
