@@ -19,6 +19,32 @@ public import Property_Primitives
 /// Note: Methods are marked `@_disfavoredOverload` so that types conforming to
 /// both `Comparison.Protocol` and `Swift.Comparable` (like `Int`) use the
 /// `Comparison.Protocol` extension.
+
+// SE-0499: Swift.Comparable no longer implies Copyable in Swift 6.4.
+// Without ~Copyable, the extension gains implicit `where Base: Copyable` on 6.4,
+// making it unreachable for ~Copyable types.
+#if compiler(>=6.4)
+extension Property.View where Tag == Ordering.Order, Base: Swift.Comparable & ~Copyable {
+
+    @_disfavoredOverload
+    @inlinable
+    public func isBefore(_ other: borrowing Base) -> Bool {
+        isBefore(other, by: .ascending)
+    }
+
+    @_disfavoredOverload
+    @inlinable
+    public func isAfter(_ other: borrowing Base) -> Bool {
+        isAfter(other, by: .ascending)
+    }
+
+    @_disfavoredOverload
+    @inlinable
+    public func isEquivalent(to other: borrowing Base) -> Bool {
+        isEquivalent(to: other, by: .ascending)
+    }
+}
+#else
 extension Property.View where Tag == Ordering.Order, Base: Swift.Comparable {
 
     /// Check if self comes before other using natural ascending order.
@@ -66,6 +92,7 @@ extension Property.View where Tag == Ordering.Order, Base: Swift.Comparable {
         isEquivalent(to: other, by: .ascending)
     }
 }
+#endif
 
 // MARK: - .order Property for Swift.Comparable
 
