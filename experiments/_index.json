@@ -1,0 +1,46 @@
+{
+  "$schema": "https://swift-institute.org/schemas/experiments-index-v1.json",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-04-18",
+  "title": "Experiments Index",
+  "blurb": "",
+  "scope": "swift-ordering-primitives (swift-primitives)",
+  "experiments": [
+    {
+      "directory": "Package.swift",
+      "displayName": "Package.swift",
+      "purpose": "Experiment discovery: verify claims from Ordering-Primitives-Design.md",
+      "date": "2026-01-22",
+      "toolchain": "Swift 6.0",
+      "status": "CONFIRMED",
+      "statusDetail": null,
+      "statusRaw": "CONFIRMED",
+      "supersededBy": null,
+      "crossRefs": []
+    },
+    {
+      "directory": "VERIFICATION-REPORT.md",
+      "displayName": "VERIFICATION-REPORT.md",
+      "purpose": "Full discovery report — 8 claims and 5 assumptions verified; KeyPath non-Sendable finding",
+      "date": "2026-01-22",
+      "toolchain": "Swift 6.0",
+      "status": "CONFIRMED",
+      "statusDetail": null,
+      "statusRaw": "CONFIRMED",
+      "supersededBy": null,
+      "crossRefs": []
+    },
+    {
+      "directory": "noncopyable-comparator-test",
+      "displayName": "noncopyable-comparator-test",
+      "purpose": "Closures with ~Copyable types via borrowing parameters for comparators",
+      "date": "2026-01-22",
+      "toolchain": "Swift 6.0",
+      "status": "CONFIRMED",
+      "statusDetail": null,
+      "statusRaw": "CONFIRMED",
+      "supersededBy": null,
+      "crossRefs": []
+    }
+  ]
+}
