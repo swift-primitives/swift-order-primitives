@@ -14,8 +14,8 @@ struct Person: Sendable {
 // ============================================================================
 
 /// [CLAIM-001] Comparators can store @Sendable closures
-@Test("CLAIM-001: Comparators can store @Sendable closures")
-func claim001_sendableClosureStorage() {
+@Test
+func `CLAIM-001: Comparators can store @Sendable closures`() {
     // Verify that a comparator can be created with a @Sendable closure
     let comparator = Ordering.Comparator<Int> { lhs, rhs in
         Comparison.Result(lhs, rhs)
@@ -30,8 +30,8 @@ func claim001_sendableClosureStorage() {
 }
 
 /// [CLAIM-002] `reversed` property returns reversed comparator (involution property)
-@Test("CLAIM-002: reversed property implements involution")
-func claim002_reversedInvolution() {
+@Test
+func `CLAIM-002: reversed property implements involution`() {
     let ascending: Ordering.Comparator<Int> = .ascending
 
     // Test basic reversal
@@ -48,8 +48,8 @@ func claim002_reversedInvolution() {
 }
 
 /// [CLAIM-003] `then(_:)` implements lexicographic chaining (monoid property)
-@Test("CLAIM-003: then(_:) implements lexicographic chaining")
-func claim003_lexicographicChaining() {
+@Test
+func `CLAIM-003: then(_:) implements lexicographic chaining`() {
     // Use closure-based selectors since KeyPath is not Sendable
     let byAge = Ordering.Comparator<Person>.by { $0.age }
     let byName = Ordering.Comparator<Person>.by { $0.name }
@@ -83,8 +83,8 @@ func claim003_lexicographicChaining() {
 
 /// [CLAIM-004] KeyPath-based projection works with generics
 /// PARTIALLY REFUTED: KeyPath works but is NOT Sendable in Swift 6
-@Test("CLAIM-004: KeyPath-based projection (NON-SENDABLE)")
-func claim004_keypathProjection() {
+@Test
+func `CLAIM-004: KeyPath-based projection (NON-SENDABLE)`() {
     // KeyPath-based comparators work but are NOT Sendable
     let byAge = Ordering.NonSendableComparator<Person>.by(\.age)
     let byName = Ordering.NonSendableComparator<Person>.by(\.name)
@@ -101,8 +101,8 @@ func claim004_keypathProjection() {
 }
 
 /// [CLAIM-005] callAsFunction enables `comparator(a, b)` syntax
-@Test("CLAIM-005: callAsFunction enables comparator(a, b) syntax")
-func claim005_callAsFunction() {
+@Test
+func `CLAIM-005: callAsFunction enables comparator(a, b) syntax`() {
     let comparator: Ordering.Comparator<Int> = .ascending
 
     // Test the call syntax directly
@@ -118,8 +118,8 @@ func claim005_callAsFunction() {
 }
 
 /// [CLAIM-006] Direction enum supports reversal
-@Test("CLAIM-006: Direction enum supports reversal")
-func claim006_directionReversal() {
+@Test
+func `CLAIM-006: Direction enum supports reversal`() {
     #expect(Ordering.Direction.ascending.reversed == .descending)
     #expect(Ordering.Direction.descending.reversed == .ascending)
 
@@ -131,8 +131,8 @@ func claim006_directionReversal() {
 }
 
 /// [CLAIM-007] Comparator works with Comparable types
-@Test("CLAIM-007: Comparator works with Comparable types")
-func claim007_comparableIntegration() {
+@Test
+func `CLAIM-007: Comparator works with Comparable types`() {
     // Test with Int
     let intComparator: Ordering.Comparator<Int> = .ascending
     #expect(intComparator(1, 2) == .less)
@@ -153,8 +153,8 @@ func claim007_comparableIntegration() {
 }
 
 /// [CLAIM-008] PartialComparator returns Optional
-@Test("CLAIM-008: PartialComparator returns Optional")
-func claim008_partialComparator() {
+@Test
+func `CLAIM-008: PartialComparator returns Optional`() {
     // Create a partial comparator for floating point that treats NaN as incomparable
     let floatComparator = Ordering.PartialComparator<Double> { lhs, rhs in
         if lhs.isNaN || rhs.isNaN {
@@ -181,8 +181,8 @@ func claim008_partialComparator() {
 // ============================================================================
 
 /// [ASSUMP-001] @Sendable closures can be stored in structs
-@Test("ASSUMP-001: @Sendable closures can be stored in structs")
-func assumption001_sendableInStruct() {
+@Test
+func `ASSUMP-001: @Sendable closures can be stored in structs`() {
     struct SendableContainer: Sendable {
         let closure: @Sendable (Int, Int) -> Bool
     }
@@ -195,8 +195,8 @@ func assumption001_sendableInStruct() {
 
 /// [ASSUMP-002] KeyPath works with generics at Tier 0
 /// REFUTED: KeyPath works with generics but is NOT Sendable
-@Test("ASSUMP-002: KeyPath with generics - Sendability check")
-func assumption002_keypathWithGenerics() {
+@Test
+func `ASSUMP-002: KeyPath with generics - Sendability check`() {
     // Test that KeyPath works in a generic context without Foundation
     func extractValue<T, V>(from value: T, using keyPath: KeyPath<T, V>) -> V {
         value[keyPath: keyPath]
@@ -211,8 +211,8 @@ func assumption002_keypathWithGenerics() {
 }
 
 /// [ASSUMP-003] callAsFunction works with generic return types
-@Test("ASSUMP-003: callAsFunction works with generic return types")
-func assumption003_callAsFunctionGeneric() {
+@Test
+func `ASSUMP-003: callAsFunction works with generic return types`() {
     struct GenericCallable<Input, Output> {
         let transform: (Input) -> Output
 
@@ -231,8 +231,8 @@ func assumption003_callAsFunctionGeneric() {
 }
 
 /// [ASSUMP-004] Closures capturing @Sendable closures are themselves @Sendable
-@Test("ASSUMP-004: Closures capturing @Sendable closures are @Sendable")
-func assumption004_sendableClosureCapture() {
+@Test
+func `ASSUMP-004: Closures capturing @Sendable closures are @Sendable`() {
     let innerClosure: @Sendable (Int, Int) -> Comparison.Result = { lhs, rhs in
         Comparison.Result(lhs, rhs)
     }
@@ -248,8 +248,8 @@ func assumption004_sendableClosureCapture() {
 }
 
 /// [ASSUMP-005] Nested generic types compile correctly
-@Test("ASSUMP-005: Nested generic types compile correctly")
-func assumption005_nestedGenerics() {
+@Test
+func `ASSUMP-005: Nested generic types compile correctly`() {
     // Ordering.Comparator<T> is a nested generic type
     let comparator: Ordering.Comparator<Int> = .ascending
 
@@ -270,8 +270,8 @@ func assumption005_nestedGenerics() {
 // ============================================================================
 
 /// Test that Direction is a proper involution
-@Test("Algebraic: Direction involution property")
-func algebraic_directionInvolution() {
+@Test
+func `Algebraic: Direction involution property`() {
     for direction in Ordering.Direction.allCases {
         #expect(direction.reversed.reversed == direction,
                "Direction.\(direction).reversed.reversed should equal Direction.\(direction)")
@@ -280,8 +280,8 @@ func algebraic_directionInvolution() {
 }
 
 /// Test Comparator monoid identity
-@Test("Algebraic: Comparator identity element")
-func algebraic_comparatorIdentity() {
+@Test
+func `Algebraic: Comparator identity element`() {
     // The identity comparator returns .equal for all inputs
     let identity = Ordering.Comparator<Int> { _, _ in .equal }
     let ascending: Ordering.Comparator<Int> = .ascending
@@ -306,8 +306,8 @@ func algebraic_comparatorIdentity() {
 // ============================================================================
 
 /// Verify Sendable conformance compiles (Swift 6 strict concurrency)
-@Test("Sendable: All Sendable types conform correctly")
-func sendable_allTypesConform() async {
+@Test
+func `Sendable: All Sendable types conform correctly`() async {
     // These lines will fail compilation if types are not Sendable
 
     let direction: Ordering.Direction = .ascending
@@ -329,8 +329,8 @@ func sendable_allTypesConform() async {
 }
 
 /// Verify that NonSendable types do NOT conform to Sendable
-@Test("Sendable: NonSendable types correctly omit Sendable")
-func sendable_nonSendableTypes() {
+@Test
+func `Sendable: NonSendable types correctly omit Sendable`() {
     // NonSendableComparator should NOT be Sendable
     let comparator = Ordering.NonSendableComparator<Person>.by(\.age)
 
@@ -346,8 +346,8 @@ func sendable_nonSendableTypes() {
 // MARK: - PROJECTION TESTS
 // ============================================================================
 
-@Test("Projection: Direction integration (Sendable)")
-func projection_directionIntegrationSendable() {
+@Test
+func `Projection: Direction integration (Sendable)`() {
     let ascending = Ordering.Projection<Person, Int>({ $0.age }, direction: .ascending)
     let descending = Ordering.Projection<Person, Int>({ $0.age }, direction: .descending)
 
@@ -367,8 +367,8 @@ func projection_directionIntegrationSendable() {
     print("PROJECTION (Sendable): Direction integration works correctly")
 }
 
-@Test("Projection: KeyPath-based (NonSendable)")
-func projection_keypathNonSendable() {
+@Test
+func `Projection: KeyPath-based (NonSendable)`() {
     let ascending = Ordering.NonSendableProjection<Person, Int>(\.age, direction: .ascending)
     let descending = Ordering.NonSendableProjection<Person, Int>(\.age, direction: .descending)
 
@@ -389,8 +389,8 @@ func projection_keypathNonSendable() {
 // ============================================================================
 
 /// Document the critical KeyPath Sendable discovery
-@Test("DISCOVERY: KeyPath is NOT Sendable in Swift 6")
-func discovery_keypathNotSendable() {
+@Test
+func `DISCOVERY: KeyPath is NOT Sendable in Swift 6`() {
     // This test documents the critical discovery that KeyPath<Root, Value>
     // is NOT Sendable in Swift 6 strict concurrency mode.
 
