@@ -30,8 +30,8 @@ struct OrderingFluentAPITests {
 
     @Suite("Copyable Types")
     struct CopyableTests {
-        @Test("isBefore with explicit comparator")
-        func isBefore() {
+        @Test
+        func `isBefore with explicit comparator`() {
             var alice = Person(name: "Alice", age: 30)
             var bob = Person(name: "Bob", age: 25)
 
@@ -43,8 +43,8 @@ struct OrderingFluentAPITests {
             #expect(bob.order.isBefore(alice, by: byAge) == true)   // 25 < 30
         }
 
-        @Test("isAfter with explicit comparator")
-        func isAfter() {
+        @Test
+        func `isAfter with explicit comparator`() {
             var alice = Person(name: "Alice", age: 30)
             var bob = Person(name: "Bob", age: 25)
 
@@ -56,8 +56,8 @@ struct OrderingFluentAPITests {
             #expect(bob.order.isAfter(alice, by: byAge) == false)  // 25 < 30
         }
 
-        @Test("isEquivalent with explicit comparator")
-        func isEquivalent() {
+        @Test
+        func `isEquivalent with explicit comparator`() {
             var alice = Person(name: "Alice", age: 30)
             let carol = Person(name: "Carol", age: 30)
             let bob = Person(name: "Bob", age: 25)
@@ -70,8 +70,8 @@ struct OrderingFluentAPITests {
             #expect(alice.order.isEquivalent(to: bob, by: byAge) == false)    // different age
         }
 
-        @Test("Multiple comparators on same type")
-        func multipleComparators() {
+        @Test
+        func `Multiple comparators on same type`() {
             var alice = Person(name: "Alice", age: 30)
             let bob = Person(name: "Bob", age: 25)
 
@@ -94,8 +94,8 @@ struct OrderingFluentAPITests {
 
     @Suite("~Copyable Types")
     struct NonCopyableTests {
-        @Test("isBefore with explicit comparator")
-        func isBefore() {
+        @Test
+        func `isBefore with explicit comparator`() {
             var a = Token(id: 5)
             var b = Token(id: 10)
 
@@ -105,8 +105,8 @@ struct OrderingFluentAPITests {
             #expect(b.order.isBefore(a, by: comparator) == false)  // 10 > 5
         }
 
-        @Test("isAfter with explicit comparator")
-        func isAfter() {
+        @Test
+        func `isAfter with explicit comparator`() {
             var a = Token(id: 5)
             var b = Token(id: 10)
 
@@ -116,8 +116,8 @@ struct OrderingFluentAPITests {
             #expect(b.order.isAfter(a, by: comparator) == true)   // 10 > 5
         }
 
-        @Test("isEquivalent with explicit comparator")
-        func isEquivalent() {
+        @Test
+        func `isEquivalent with explicit comparator`() {
             var a = Token(id: 5)
             let b = Token(id: 10)
             let c = Token(id: 5)
@@ -133,8 +133,8 @@ struct OrderingFluentAPITests {
 
     @Suite("Comparison.Protocol Convenience")
     struct ComparisonProtocolConvenienceTests {
-        @Test("isBefore without explicit comparator")
-        func isBefore() {
+        @Test
+        func `isBefore without explicit comparator`() {
             var a = Token(id: 5)
             var b = Token(id: 10)
 
@@ -142,8 +142,8 @@ struct OrderingFluentAPITests {
             #expect(b.order.isBefore(a) == false)  // 10 > 5
         }
 
-        @Test("isAfter without explicit comparator")
-        func isAfter() {
+        @Test
+        func `isAfter without explicit comparator`() {
             var a = Token(id: 5)
             var b = Token(id: 10)
 
@@ -151,8 +151,8 @@ struct OrderingFluentAPITests {
             #expect(b.order.isAfter(a) == true)   // 10 > 5
         }
 
-        @Test("isEquivalent without explicit comparator")
-        func isEquivalent() {
+        @Test
+        func `isEquivalent without explicit comparator`() {
             var a = Token(id: 5)
             let b = Token(id: 10)
             let c = Token(id: 5)
@@ -166,8 +166,8 @@ struct OrderingFluentAPITests {
 
     @Suite("Descending Order")
     struct DescendingOrderTests {
-        @Test("isBefore with descending comparator")
-        func isBeforeDescending() {
+        @Test
+        func `isBefore with descending comparator`() {
             var a = Token(id: 5)
             var b = Token(id: 10)
 
@@ -179,8 +179,8 @@ struct OrderingFluentAPITests {
             #expect(b.order.isBefore(a, by: descending) == true)
         }
 
-        @Test("isAfter with descending comparator")
-        func isAfterDescending() {
+        @Test
+        func `isAfter with descending comparator`() {
             var a = Token(id: 5)
             var b = Token(id: 10)
 
@@ -197,8 +197,8 @@ struct OrderingFluentAPITests {
 
     @Suite("Orderable Protocol")
     struct OrderableProtocolTests {
-        @Test("Type conforming to Orderable gets .order property")
-        func orderableGetsOrderProperty() {
+        @Test
+        func `Type conforming to Orderable gets .order property`() {
             struct SimpleValue: Ordering.Orderable {
                 let x: Int
             }
@@ -213,8 +213,8 @@ struct OrderingFluentAPITests {
             #expect(value.order.isAfter(other, by: comparator) == true)
         }
 
-        @Test("~Copyable type can conform to Orderable")
-        func nonCopyableOrderable() {
+        @Test
+        func `~Copyable type can conform to Orderable`() {
             struct Resource: ~Copyable, Ordering.Orderable {
                 let priority: Int
             }
@@ -234,8 +234,8 @@ struct OrderingFluentAPITests {
 
     @Suite("Standard Type Conformances")
     struct StandardTypeConformancesTests {
-        @Test("Int has .order property")
-        func intOrderable() {
+        @Test
+        func `Int has .order property`() {
             var a = 5
             let b = 10
 
@@ -244,8 +244,8 @@ struct OrderingFluentAPITests {
             #expect(a.order.isAfter(b) == false)
         }
 
-        @Test("String has .order property with explicit comparator")
-        func stringOrderable() {
+        @Test
+        func `String has .order property with explicit comparator`() {
             var apple = "apple"
             let banana = "banana"
 
@@ -255,8 +255,8 @@ struct OrderingFluentAPITests {
             #expect(apple.order.isAfter(banana, by: comparator) == false)
         }
 
-        @Test("Double has .order property with explicit comparator")
-        func doubleOrderable() {
+        @Test
+        func `Double has .order property with explicit comparator`() {
             var a = 1.5
             let b = 2.5
 
@@ -266,8 +266,8 @@ struct OrderingFluentAPITests {
             #expect(a.order.isAfter(b, by: comparator) == false)
         }
 
-        @Test("UInt8 has .order property with convenience methods")
-        func uint8Orderable() {
+        @Test
+        func `UInt8 has .order property with convenience methods`() {
             var a: UInt8 = 100
             let b: UInt8 = 200
 
@@ -281,8 +281,8 @@ struct OrderingFluentAPITests {
 
     @Suite("Swift.Comparable Convenience")
     struct SwiftComparableConvenienceTests {
-        @Test("String has convenience methods without explicit comparator")
-        func stringConvenience() {
+        @Test
+        func `String has convenience methods without explicit comparator`() {
             var apple = "apple"
             let banana = "banana"
 
@@ -292,8 +292,8 @@ struct OrderingFluentAPITests {
             #expect(apple.order.isEquivalent(to: "apple") == true)
         }
 
-        @Test("Double has convenience methods without explicit comparator")
-        func doubleConvenience() {
+        @Test
+        func `Double has convenience methods without explicit comparator`() {
             var a = 1.5
             let b = 2.5
 
@@ -303,8 +303,8 @@ struct OrderingFluentAPITests {
             #expect(a.order.isEquivalent(to: 1.5) == true)
         }
 
-        @Test("Float has convenience methods")
-        func floatConvenience() {
+        @Test
+        func `Float has convenience methods`() {
             var a: Float = 3.14
             let b: Float = 2.71
 
@@ -312,8 +312,8 @@ struct OrderingFluentAPITests {
             #expect(a.order.isAfter(b) == true)
         }
 
-        @Test("Character has convenience methods")
-        func characterConvenience() {
+        @Test
+        func `Character has convenience methods`() {
             var a: Character = "a"
             let z: Character = "z"
 
