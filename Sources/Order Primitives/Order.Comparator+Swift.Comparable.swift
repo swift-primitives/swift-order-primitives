@@ -13,7 +13,7 @@ public import Comparison_Primitives
 // Without ~Copyable, the extension gains implicit `where T: Copyable` on 6.4,
 // making it unreachable for ~Copyable associated types (e.g., Collection.Protocol.Element).
 #if compiler(>=6.4)
-extension Ordering.Comparator where T: Swift.Comparable & ~Copyable {
+extension Order.Comparator where T: Swift.Comparable & ~Copyable {
     @inlinable
     public init(swift: Void) {
         nonisolated(unsafe) let _: T.Type = T.self
@@ -24,25 +24,25 @@ extension Ordering.Comparator where T: Swift.Comparable & ~Copyable {
 
     @_disfavoredOverload
     @inlinable
-    public static var ascending: Ordering.Comparator<T> {
-        Ordering.Comparator(swift: ())
+    public static var ascending: Order.Comparator<T> {
+        Order.Comparator(swift: ())
     }
 
     @_disfavoredOverload
     @inlinable
-    public static var descending: Ordering.Comparator<T> {
-        Ordering.Comparator(swift: ()).reversed
+    public static var descending: Order.Comparator<T> {
+        Order.Comparator(swift: ()).reversed
     }
 }
 #else
-extension Ordering.Comparator where T: Swift.Comparable {
+extension Order.Comparator where T: Swift.Comparable {
     /// Creates a comparator using the natural ordering of a `Swift.Comparable` type.
     ///
-    /// This initializer bridges `Swift.Comparable` types to `Ordering.Comparator`,
+    /// This initializer bridges `Swift.Comparable` types to `Order.Comparator`,
     /// enabling use with standard library types like `Int`, `String`, and `Double`.
     ///
     /// ```swift
-    /// let intComparator = Ordering.Comparator<Int>(swift: ())
+    /// let intComparator = Order.Comparator<Int>(swift: ())
     /// intComparator(1, 2)  // .less
     /// intComparator(2, 2)  // .equal
     /// intComparator(3, 2)  // .greater
@@ -60,15 +60,15 @@ extension Ordering.Comparator where T: Swift.Comparable {
     /// Smaller values are ordered before larger values.
     ///
     /// ```swift
-    /// let comparator: Ordering.Comparator<Int> = .ascending
+    /// let comparator: Order.Comparator<Int> = .ascending
     /// comparator(1, 2)  // .less
     /// ```
     ///
     /// - Note: For `~Copyable` types, conform to `Comparison.Protocol` instead.
     @_disfavoredOverload
     @inlinable
-    public static var ascending: Ordering.Comparator<T> {
-        Ordering.Comparator(swift: ())
+    public static var ascending: Order.Comparator<T> {
+        Order.Comparator(swift: ())
     }
 
     /// The natural descending comparator for `Swift.Comparable` types.
@@ -76,24 +76,24 @@ extension Ordering.Comparator where T: Swift.Comparable {
     /// Larger values are ordered before smaller values.
     ///
     /// ```swift
-    /// let comparator: Ordering.Comparator<Int> = .descending
+    /// let comparator: Order.Comparator<Int> = .descending
     /// comparator(1, 2)  // .greater
     /// ```
     ///
     /// - Note: For `~Copyable` types, conform to `Comparison.Protocol` instead.
     @_disfavoredOverload
     @inlinable
-    public static var descending: Ordering.Comparator<T> {
-        Ordering.Comparator(swift: ()).reversed
+    public static var descending: Order.Comparator<T> {
+        Order.Comparator(swift: ()).reversed
     }
 }
 #endif
 
-extension Ordering.Comparator {
+extension Order.Comparator {
     /// Creates a comparator using a key-extracting function for `Swift.Comparable` keys.
     ///
     /// ```swift
-    /// let byAge = Ordering.Comparator<Person>.by { $0.age }
+    /// let byAge = Order.Comparator<Person>.by { $0.age }
     /// ```
     ///
     /// - Parameter selector: A function that extracts the comparable key from a value.
@@ -104,9 +104,9 @@ extension Ordering.Comparator {
     @inlinable
     public static func by<Value: Swift.Comparable>(
         _ selector: @escaping @Sendable (borrowing T) -> Value
-    ) -> Ordering.Comparator<T> {
+    ) -> Order.Comparator<T> {
         nonisolated(unsafe) let _: Value.Type = Value.self
-        return Ordering.Comparator { lhs, rhs in
+        return Order.Comparator { lhs, rhs in
             Comparison(comparing: selector(lhs), to: selector(rhs))
         }
     }

@@ -1,20 +1,20 @@
 // OrderingFluentAPITests.swift
-// Tests for Ordering fluent API (.order property)
+// Tests for Order fluent API (.order property)
 
 import Testing
-@testable import Ordering_Primitives
+@testable import Order_Primitives
 
-@Suite("Ordering Fluent API")
+@Suite("Order Fluent API")
 struct OrderingFluentAPITests {
 
     // MARK: - Test Types
 
-    struct Person: Ordering.Orderable {
+    struct Person: Order.Orderable {
         let name: String
         let age: Int
     }
 
-    struct Token: ~Copyable, Ordering.Orderable, Comparison.`Protocol` {
+    struct Token: ~Copyable, Order.Orderable, Comparison.`Protocol` {
         let id: Int
 
         static func < (lhs: borrowing Token, rhs: borrowing Token) -> Bool {
@@ -35,7 +35,7 @@ struct OrderingFluentAPITests {
             var alice = Person(name: "Alice", age: 30)
             var bob = Person(name: "Bob", age: 25)
 
-            let byAge = Ordering.Comparator<Person> { lhs, rhs in
+            let byAge = Order.Comparator<Person> { lhs, rhs in
                 Comparison(comparing: lhs.age, to: rhs.age)
             }
 
@@ -48,7 +48,7 @@ struct OrderingFluentAPITests {
             var alice = Person(name: "Alice", age: 30)
             var bob = Person(name: "Bob", age: 25)
 
-            let byAge = Ordering.Comparator<Person> { lhs, rhs in
+            let byAge = Order.Comparator<Person> { lhs, rhs in
                 Comparison(comparing: lhs.age, to: rhs.age)
             }
 
@@ -62,7 +62,7 @@ struct OrderingFluentAPITests {
             let carol = Person(name: "Carol", age: 30)
             let bob = Person(name: "Bob", age: 25)
 
-            let byAge = Ordering.Comparator<Person> { lhs, rhs in
+            let byAge = Order.Comparator<Person> { lhs, rhs in
                 Comparison(comparing: lhs.age, to: rhs.age)
             }
 
@@ -75,10 +75,10 @@ struct OrderingFluentAPITests {
             var alice = Person(name: "Alice", age: 30)
             let bob = Person(name: "Bob", age: 25)
 
-            let byAge = Ordering.Comparator<Person> { lhs, rhs in
+            let byAge = Order.Comparator<Person> { lhs, rhs in
                 Comparison(comparing: lhs.age, to: rhs.age)
             }
-            let byName = Ordering.Comparator<Person> { lhs, rhs in
+            let byName = Order.Comparator<Person> { lhs, rhs in
                 Comparison(comparing: lhs.name, to: rhs.name)
             }
 
@@ -99,7 +99,7 @@ struct OrderingFluentAPITests {
             var a = Token(id: 5)
             var b = Token(id: 10)
 
-            let comparator: Ordering.Comparator<Token> = .ascending
+            let comparator: Order.Comparator<Token> = .ascending
 
             #expect(a.order.isBefore(b, by: comparator) == true)   // 5 < 10
             #expect(b.order.isBefore(a, by: comparator) == false)  // 10 > 5
@@ -110,7 +110,7 @@ struct OrderingFluentAPITests {
             var a = Token(id: 5)
             var b = Token(id: 10)
 
-            let comparator: Ordering.Comparator<Token> = .ascending
+            let comparator: Order.Comparator<Token> = .ascending
 
             #expect(a.order.isAfter(b, by: comparator) == false)  // 5 < 10
             #expect(b.order.isAfter(a, by: comparator) == true)   // 10 > 5
@@ -122,7 +122,7 @@ struct OrderingFluentAPITests {
             let b = Token(id: 10)
             let c = Token(id: 5)
 
-            let comparator: Ordering.Comparator<Token> = .ascending
+            let comparator: Order.Comparator<Token> = .ascending
 
             #expect(a.order.isEquivalent(to: c, by: comparator) == true)   // same id
             #expect(a.order.isEquivalent(to: b, by: comparator) == false)  // different id
@@ -171,7 +171,7 @@ struct OrderingFluentAPITests {
             var a = Token(id: 5)
             var b = Token(id: 10)
 
-            let descending: Ordering.Comparator<Token> = .descending
+            let descending: Order.Comparator<Token> = .descending
 
             // In descending order, larger values come first
             // So 5 is AFTER 10 in descending order
@@ -184,7 +184,7 @@ struct OrderingFluentAPITests {
             var a = Token(id: 5)
             var b = Token(id: 10)
 
-            let descending: Ordering.Comparator<Token> = .descending
+            let descending: Order.Comparator<Token> = .descending
 
             // In descending order, smaller values come later
             // So 5 is AFTER 10 in descending order
@@ -199,14 +199,14 @@ struct OrderingFluentAPITests {
     struct OrderableProtocolTests {
         @Test
         func `Type conforming to Orderable gets .order property`() {
-            struct SimpleValue: Ordering.Orderable {
+            struct SimpleValue: Order.Orderable {
                 let x: Int
             }
 
             var value = SimpleValue(x: 10)
             let other = SimpleValue(x: 5)
 
-            let comparator = Ordering.Comparator<SimpleValue> { lhs, rhs in
+            let comparator = Order.Comparator<SimpleValue> { lhs, rhs in
                 Comparison(comparing: lhs.x, to: rhs.x)
             }
 
@@ -215,14 +215,14 @@ struct OrderingFluentAPITests {
 
         @Test
         func `~Copyable type can conform to Orderable`() {
-            struct Resource: ~Copyable, Ordering.Orderable {
+            struct Resource: ~Copyable, Order.Orderable {
                 let priority: Int
             }
 
             var high = Resource(priority: 10)
             let low = Resource(priority: 1)
 
-            let byPriority = Ordering.Comparator<Resource> { lhs, rhs in
+            let byPriority = Order.Comparator<Resource> { lhs, rhs in
                 Comparison(comparing: lhs.priority, to: rhs.priority)
             }
 
@@ -249,7 +249,7 @@ struct OrderingFluentAPITests {
             var apple = "apple"
             let banana = "banana"
 
-            let comparator: Ordering.Comparator<String> = .ascending
+            let comparator: Order.Comparator<String> = .ascending
 
             #expect(apple.order.isBefore(banana, by: comparator) == true)
             #expect(apple.order.isAfter(banana, by: comparator) == false)
@@ -260,7 +260,7 @@ struct OrderingFluentAPITests {
             var a = 1.5
             let b = 2.5
 
-            let comparator: Ordering.Comparator<Double> = .ascending
+            let comparator: Order.Comparator<Double> = .ascending
 
             #expect(a.order.isBefore(b, by: comparator) == true)
             #expect(a.order.isAfter(b, by: comparator) == false)

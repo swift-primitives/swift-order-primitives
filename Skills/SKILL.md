@@ -1,7 +1,7 @@
 ---
 name: ordering-primitives
 description: |
-  Ordering and comparison primitives for total and partial orders.
+  Order and comparison primitives for total and partial orders.
   ALWAYS apply when working with comparison semantics.
 
 layer: implementation
@@ -13,10 +13,10 @@ requires:
 applies_to:
   - swift
   - swift-primitives
-  - swift-ordering-primitives
+  - swift-order-primitives
 ---
 
-# Ordering Primitives
+# Order Primitives
 
 Total and partial ordering primitives.
 
@@ -28,11 +28,11 @@ Total and partial ordering primitives.
 
 | Type | Semantics |
 |------|-----------|
-| `Ordering.Total` | Complete ordering (every pair comparable) |
-| `Ordering.Partial` | May have incomparable pairs |
+| `Order.Total` | Complete ordering (every pair comparable) |
+| `Order.Partial` | May have incomparable pairs |
 
 ---
 
 ## Cross-References
 
-Full analysis: `Research/Ordering Primitives Design.md`
+Full analysis: `Research/Order Primitives Design.md`

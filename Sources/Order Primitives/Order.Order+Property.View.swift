@@ -11,7 +11,7 @@ public import Property_Primitives
 
 // MARK: - Core Methods (require explicit comparator)
 
-extension Property.View where Tag == Ordering.Order, Base: ~Copyable {
+extension Property.View where Tag == Order.Order, Base: ~Copyable {
 
     /// Check if self comes before other using the comparator.
     ///
@@ -24,7 +24,7 @@ extension Property.View where Tag == Ordering.Order, Base: ~Copyable {
     @inlinable
     public func isBefore(
         _ other: borrowing Base,
-        by comparator: Ordering.Comparator<Base>
+        by comparator: Order.Comparator<Base>
     ) -> Bool {
         unsafe comparator(base.pointee, other).isLess
     }
@@ -40,7 +40,7 @@ extension Property.View where Tag == Ordering.Order, Base: ~Copyable {
     @inlinable
     public func isAfter(
         _ other: borrowing Base,
-        by comparator: Ordering.Comparator<Base>
+        by comparator: Order.Comparator<Base>
     ) -> Bool {
         unsafe comparator(base.pointee, other).isGreater
     }
@@ -59,7 +59,7 @@ extension Property.View where Tag == Ordering.Order, Base: ~Copyable {
     @inlinable
     public func isEquivalent(
         to other: borrowing Base,
-        by comparator: Ordering.Comparator<Base>
+        by comparator: Order.Comparator<Base>
     ) -> Bool {
         unsafe comparator(base.pointee, other).isEqual
     }
@@ -68,7 +68,7 @@ extension Property.View where Tag == Ordering.Order, Base: ~Copyable {
 // MARK: - Convenience Methods for Comparison.Protocol (use natural ordering)
 
 extension Property.View
-where Tag == Ordering.Order, Base: Comparison.`Protocol` & ~Copyable {
+where Tag == Order.Order, Base: Comparison.`Protocol` & ~Copyable {
 
     /// Check if self comes before other using natural ascending order.
     ///

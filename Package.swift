@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-ordering-primitives",
+    name: "swift-order-primitives",
     platforms: [
         .macOS(.v26),
         .iOS(.v26),
@@ -13,8 +13,8 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "Ordering Primitives",
-            targets: ["Ordering Primitives"]
+            name: "Order Primitives",
+            targets: ["Order Primitives"]
         ),
     ],
     dependencies: [
@@ -23,15 +23,15 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Ordering Primitives",
+            name: "Order Primitives",
             dependencies: [
                 .product(name: "Comparison Primitives", package: "swift-comparison-primitives"),
                 .product(name: "Property Primitives", package: "swift-property-primitives"),
             ]
         ),
         .testTarget(
-            name: "Ordering Primitives Tests",
-            dependencies: ["Ordering Primitives"]
+            name: "Order Primitives Tests",
+            dependencies: ["Order Primitives"]
         ),
     ],
     swiftLanguageModes: [.v6]

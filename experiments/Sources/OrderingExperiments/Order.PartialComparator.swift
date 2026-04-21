@@ -1,6 +1,6 @@
-// MARK: - Ordering.PartialComparator
+// MARK: - Order.PartialComparator
 
-extension Ordering {
+extension Order {
     /// A comparator for partially ordered types.
     ///
     /// Returns `nil` when two values are incomparable.

@@ -1,6 +1,6 @@
-// MARK: - Ordering.Direction
+// MARK: - Order.Direction
 
-extension Ordering {
+extension Order {
     /// Direction of ordering: ascending or descending.
     public enum Direction: Sendable, Hashable, CaseIterable {
         /// Smaller values come first.

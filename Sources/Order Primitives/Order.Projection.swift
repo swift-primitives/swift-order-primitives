@@ -7,7 +7,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-extension Ordering {
+extension Order {
     /// A projection that extracts an orderable value from a root type.
     ///
     /// Projections can be composed and transformed before being converted
@@ -16,7 +16,7 @@ extension Ordering {
     /// ## Creating Projections
     ///
     /// ```swift
-    /// let byAge = Ordering.Projection<Person, Int>(
+    /// let byAge = Order.Projection<Person, Int>(
     ///     { $0.age },
     ///     direction: .descending
     /// )
@@ -37,7 +37,7 @@ extension Ordering {
     ///
     /// ```swift
     /// struct Token: ~Copyable, Comparison.Protocol { let id: Int; ... }
-    /// let byId = Ordering.Projection<Token, Token> { $0 }
+    /// let byId = Order.Projection<Token, Token> { $0 }
     /// ```
     public struct Projection<Root: ~Copyable, Value: Comparison.`Protocol` & ~Copyable>: Sendable {
         /// The key extraction function.
@@ -76,8 +76,8 @@ extension Ordering {
         /// The resulting comparator extracts the value using this projection's
         /// extractor and compares using the projection's direction.
         @inlinable
-        public var comparator: Ordering.Comparator<Root> {
-            let base = Ordering.Comparator<Root>.by(extract)
+        public var comparator: Comparator<Root> {
+            let base = Comparator<Root>.by(extract)
             return direction == .ascending ? base : base.reversed
         }
     }

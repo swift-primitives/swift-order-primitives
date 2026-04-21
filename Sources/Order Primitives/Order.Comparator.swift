@@ -9,7 +9,7 @@
 
 public import Comparison_Primitives
 
-extension Ordering {
+extension Order {
     /// A reified comparator that determines the relative order of two values.
     ///
     /// Comparators are first-class values that can be stored, composed, and
@@ -21,15 +21,15 @@ extension Ordering {
     /// For `Comparison.Protocol` types, use the natural ordering:
     ///
     /// ```swift
-    /// let ascending: Ordering.Comparator<Int> = .ascending
-    /// let descending: Ordering.Comparator<Int> = .descending
+    /// let ascending: Order.Comparator<Int> = .ascending
+    /// let descending: Order.Comparator<Int> = .descending
     /// ```
     ///
     /// For custom orderings, use key extraction:
     ///
     /// ```swift
-    /// let byAge = Ordering.Comparator<Person>.by { $0.age }
-    /// let byName = Ordering.Comparator<Person>.by { $0.name }
+    /// let byAge = Order.Comparator<Person>.by { $0.age }
+    /// let byName = Order.Comparator<Person>.by { $0.name }
     /// ```
     ///
     /// ## Composing Comparators
@@ -37,7 +37,7 @@ extension Ordering {
     /// Chain comparators for multi-field ordering:
     ///
     /// ```swift
-    /// let comparator = Ordering.Comparator<Person>
+    /// let comparator = Order.Comparator<Person>
     ///     .by { $0.department }
     ///     .then(.by { $0.salary }.reversed)
     ///     .then(.by { $0.name })
@@ -55,7 +55,7 @@ extension Ordering {
     /// ```swift
     /// struct Token: ~Copyable { let id: Int }
     ///
-    /// let comparator = Ordering.Comparator<Token> { lhs, rhs in
+    /// let comparator = Order.Comparator<Token> { lhs, rhs in
     ///     Comparison(comparing: lhs.id, to: rhs.id)
     /// }
     /// ```

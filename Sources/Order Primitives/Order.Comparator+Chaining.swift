@@ -7,7 +7,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-extension Ordering.Comparator where T: ~Copyable {
+extension Order.Comparator where T: ~Copyable {
     /// Returns a comparator that uses this comparator first, then the other
     /// comparator to break ties.
     ///
@@ -15,7 +15,7 @@ extension Ordering.Comparator where T: ~Copyable {
     /// to determine ordering. Otherwise, this comparator's result is used.
     ///
     /// ```swift
-    /// let byNameThenAge = Ordering.Comparator<Person>
+    /// let byNameThenAge = Order.Comparator<Person>
     ///     .by { $0.name }
     ///     .then(.by { $0.age })
     /// ```
@@ -26,8 +26,8 @@ extension Ordering.Comparator where T: ~Copyable {
     /// - Parameter other: The comparator to use when this comparator returns `.equal`.
     /// - Returns: A new comparator that chains both comparators.
     @inlinable
-    public func then(_ other: Ordering.Comparator<T>) -> Ordering.Comparator<T> {
-        Ordering.Comparator { [compare] lhs, rhs in
+    public func then(_ other: Order.Comparator<T>) -> Order.Comparator<T> {
+        Order.Comparator { [compare] lhs, rhs in
             compare(lhs, rhs).then(other.compare(lhs, rhs))
         }
     }
@@ -39,7 +39,7 @@ extension Ordering.Comparator where T: ~Copyable {
     /// the primary comparison is decisive.
     ///
     /// ```swift
-    /// let comparator = Ordering.Comparator<Person>
+    /// let comparator = Order.Comparator<Person>
     ///     .by { $0.name }
     ///     .then { .by { $0.expensiveComputation } }
     /// ```
@@ -49,9 +49,9 @@ extension Ordering.Comparator where T: ~Copyable {
     /// - Returns: A new comparator that chains both comparators lazily.
     @inlinable
     public func then(
-        with other: @escaping @Sendable () -> Ordering.Comparator<T>
-    ) -> Ordering.Comparator<T> {
-        Ordering.Comparator { [compare] lhs, rhs in
+        with other: @escaping @Sendable () -> Order.Comparator<T>
+    ) -> Order.Comparator<T> {
+        Order.Comparator { [compare] lhs, rhs in
             let primary = compare(lhs, rhs)
             if primary.isEqual {
                 return other().compare(lhs, rhs)

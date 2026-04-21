@@ -9,7 +9,7 @@
 
 public import Property_Primitives
 
-extension Ordering {
+extension Order {
     /// A type that can participate in fluent ordering comparisons.
     ///
     /// Conforming to `Orderable` provides the `.order` property, enabling
@@ -20,7 +20,7 @@ extension Ordering {
     /// Types opt into `Orderable` by declaring conformance:
     ///
     /// ```swift
-    /// struct Person: Ordering.Orderable {
+    /// struct Person: Order.Orderable {
     ///     let name: String
     ///     let age: Int
     /// }
@@ -31,7 +31,7 @@ extension Ordering {
     /// Once conforming, use `.order` with a comparator:
     ///
     /// ```swift
-    /// let byAge = Ordering.Comparator<Person> { lhs, rhs in
+    /// let byAge = Order.Comparator<Person> { lhs, rhs in
     ///     Comparison(comparing: lhs.age, to: rhs.age)
     /// }
     ///
@@ -49,7 +49,7 @@ extension Ordering {
     /// convenience methods that use natural ascending order:
     ///
     /// ```swift
-    /// struct Token: Ordering.Orderable, Comparison.`Protocol` {
+    /// struct Token: Order.Orderable, Comparison.`Protocol` {
     ///     let id: Int
     ///
     ///     static func < (lhs: borrowing Token, rhs: borrowing Token) -> Bool {
@@ -69,7 +69,7 @@ extension Ordering {
     public protocol Orderable: ~Copyable {}
 }
 
-extension Ordering.Orderable where Self: ~Copyable {
+extension Order.Orderable where Self: ~Copyable {
     /// Access fluent ordering APIs.
     ///
     /// The `.order` property provides methods for checking relative ordering
@@ -83,9 +83,9 @@ extension Ordering.Orderable where Self: ~Copyable {
     ///
     /// For `Comparison.Protocol` types, convenience methods without the
     /// `by:` parameter use natural ascending order.
-    public var order: Property<Ordering.Order, Self>.View {
+    public var order: Property<Order.Order, Self>.View {
         mutating _read {
-            yield unsafe Property<Ordering.Order, Self>.View(&self)
+            yield unsafe Property<Order.Order, Self>.View(&self)
         }
     }
 }

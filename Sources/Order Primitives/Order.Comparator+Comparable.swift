@@ -9,11 +9,11 @@
 
 public import Comparison_Primitives
 
-extension Ordering.Comparator where T: Comparison.`Protocol` & ~Copyable {
+extension Order.Comparator where T: Comparison.`Protocol` & ~Copyable {
     /// Creates a comparator using the natural ordering of a `Comparison.Protocol` type.
     ///
     /// ```swift
-    /// let intComparator = Ordering.Comparator<Int>()
+    /// let intComparator = Order.Comparator<Int>()
     /// intComparator(1, 2)  // .less
     /// intComparator(2, 2)  // .equal
     /// intComparator(3, 2)  // .greater
@@ -31,12 +31,12 @@ extension Ordering.Comparator where T: Comparison.`Protocol` & ~Copyable {
     /// Smaller values are ordered before larger values.
     ///
     /// ```swift
-    /// let comparator: Ordering.Comparator<Int> = .ascending
+    /// let comparator: Order.Comparator<Int> = .ascending
     /// comparator(1, 2)  // .less
     /// ```
     @inlinable
-    public static var ascending: Ordering.Comparator<T> {
-        Ordering.Comparator()
+    public static var ascending: Order.Comparator<T> {
+        Order.Comparator()
     }
 
     /// The natural descending comparator for `Comparison.Protocol` types.
@@ -44,11 +44,11 @@ extension Ordering.Comparator where T: Comparison.`Protocol` & ~Copyable {
     /// Larger values are ordered before smaller values.
     ///
     /// ```swift
-    /// let comparator: Ordering.Comparator<Int> = .descending
+    /// let comparator: Order.Comparator<Int> = .descending
     /// comparator(1, 2)  // .greater
     /// ```
     @inlinable
-    public static var descending: Ordering.Comparator<T> {
-        Ordering.Comparator().reversed
+    public static var descending: Order.Comparator<T> {
+        Order.Comparator().reversed
     }
 }

@@ -1,6 +1,6 @@
-// MARK: - Ordering.Comparator
+// MARK: - Order.Comparator
 
-extension Ordering {
+extension Order {
     /// A reified comparator that determines the relative order of two values.
     ///
     /// Comparators are first-class values that can be stored, composed, and
@@ -27,14 +27,14 @@ extension Ordering {
 
 // MARK: - Reversal
 
-extension Ordering.Comparator {
+extension Order.Comparator {
     /// Returns a comparator with reversed ordering.
     ///
     /// Elements that were ordered as less become greater, and vice versa.
     /// Equal elements remain equal.
     @inlinable
-    public var reversed: Ordering.Comparator<T> {
-        Ordering.Comparator { [compare] lhs, rhs in
+    public var reversed: Order.Comparator<T> {
+        Order.Comparator { [compare] lhs, rhs in
             compare(lhs, rhs).reversed
         }
     }
@@ -42,12 +42,12 @@ extension Ordering.Comparator {
 
 // MARK: - Lexicographic Chaining
 
-extension Ordering.Comparator {
+extension Order.Comparator {
     /// Returns a comparator that uses this comparator first, then the other
     /// comparator to break ties.
     @inlinable
-    public func then(_ other: Ordering.Comparator<T>) -> Ordering.Comparator<T> {
-        Ordering.Comparator { [compare] lhs, rhs in
+    public func then(_ other: Order.Comparator<T>) -> Order.Comparator<T> {
+        Order.Comparator { [compare] lhs, rhs in
             compare(lhs, rhs).then(other.compare(lhs, rhs))
         }
     }
@@ -59,9 +59,9 @@ extension Ordering.Comparator {
     /// the primary comparison is decisive.
     @inlinable
     public func then(
-        with other: @escaping @Sendable () -> Ordering.Comparator<T>
-    ) -> Ordering.Comparator<T> {
-        Ordering.Comparator { [compare] lhs, rhs in
+        with other: @escaping @Sendable () -> Order.Comparator<T>
+    ) -> Order.Comparator<T> {
+        Order.Comparator { [compare] lhs, rhs in
             let primary = compare(lhs, rhs)
             if primary.isEqual {
                 return other().compare(lhs, rhs)
@@ -73,7 +73,7 @@ extension Ordering.Comparator {
 
 // MARK: - Projection (Sendable closure-based only)
 
-extension Ordering.Comparator {
+extension Order.Comparator {
     /// Creates a comparator using a key-extracting function.
     ///
     /// This is the recommended API for key-based ordering in Swift 6
@@ -81,8 +81,8 @@ extension Ordering.Comparator {
     @inlinable
     public static func by<Value: Comparable>(
         _ selector: @escaping @Sendable (T) -> Value
-    ) -> Ordering.Comparator<T> {
-        Ordering.Comparator { lhs, rhs in
+    ) -> Order.Comparator<T> {
+        Order.Comparator { lhs, rhs in
             Comparison.Result(selector(lhs), selector(rhs))
         }
     }
@@ -91,9 +91,9 @@ extension Ordering.Comparator {
     @inlinable
     public static func by<Value>(
         _ selector: @escaping @Sendable (T) -> Value,
-        using comparator: Ordering.Comparator<Value>
-    ) -> Ordering.Comparator<T> {
-        Ordering.Comparator { lhs, rhs in
+        using comparator: Order.Comparator<Value>
+    ) -> Order.Comparator<T> {
+        Order.Comparator { lhs, rhs in
             comparator(selector(lhs), selector(rhs))
         }
     }
@@ -101,7 +101,7 @@ extension Ordering.Comparator {
 
 // MARK: - Comparable Construction
 
-extension Ordering.Comparator where T: Comparable {
+extension Order.Comparator where T: Comparable {
     /// Creates a comparator using the natural ordering of a Comparable type.
     @inlinable
     public init() {
@@ -110,14 +110,14 @@ extension Ordering.Comparator where T: Comparable {
 
     /// The natural ascending comparator for Comparable types.
     @inlinable
-    public static var ascending: Ordering.Comparator<T> {
-        Ordering.Comparator()
+    public static var ascending: Order.Comparator<T> {
+        Order.Comparator()
     }
 
     /// The natural descending comparator for Comparable types.
     @inlinable
-    public static var descending: Ordering.Comparator<T> {
-        Ordering.Comparator().reversed
+    public static var descending: Order.Comparator<T> {
+        Order.Comparator().reversed
     }
 }
 
@@ -125,11 +125,11 @@ extension Ordering.Comparator where T: Comparable {
 // DISCOVERY: KeyPath<T, Value> is NOT Sendable in Swift 6.
 // This section documents the incompatibility and provides a non-Sendable alternative.
 
-extension Ordering {
+extension Order {
     /// A non-Sendable comparator for use with KeyPath-based projections.
     ///
     /// - Important: This type exists because `KeyPath` is not `Sendable` in Swift 6.
-    ///   Use `Ordering.Comparator` with closure-based `by(_:)` for Sendable comparators.
+    ///   Use `Order.Comparator` with closure-based `by(_:)` for Sendable comparators.
     public struct NonSendableComparator<T> {
         /// The underlying comparison function.
         @usableFromInline

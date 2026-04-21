@@ -17,7 +17,7 @@ struct Person: Sendable {
 @Test
 func `CLAIM-001: Comparators can store @Sendable closures`() {
     // Verify that a comparator can be created with a @Sendable closure
-    let comparator = Ordering.Comparator<Int> { lhs, rhs in
+    let comparator = Order.Comparator<Int> { lhs, rhs in
         Comparison.Result(lhs, rhs)
     }
 
@@ -32,7 +32,7 @@ func `CLAIM-001: Comparators can store @Sendable closures`() {
 /// [CLAIM-002] `reversed` property returns reversed comparator (involution property)
 @Test
 func `CLAIM-002: reversed property implements involution`() {
-    let ascending: Ordering.Comparator<Int> = .ascending
+    let ascending: Order.Comparator<Int> = .ascending
 
     // Test basic reversal
     #expect(ascending(1, 2) == .less)
@@ -51,9 +51,9 @@ func `CLAIM-002: reversed property implements involution`() {
 @Test
 func `CLAIM-003: then(_:) implements lexicographic chaining`() {
     // Use closure-based selectors since KeyPath is not Sendable
-    let byAge = Ordering.Comparator<Person>.by { $0.age }
-    let byName = Ordering.Comparator<Person>.by { $0.name }
-    let byDept = Ordering.Comparator<Person>.by { $0.department }
+    let byAge = Order.Comparator<Person>.by { $0.age }
+    let byName = Order.Comparator<Person>.by { $0.name }
+    let byDept = Order.Comparator<Person>.by { $0.department }
 
     let alice = Person(name: "Alice", age: 30, department: "Engineering")
     let bob = Person(name: "Bob", age: 30, department: "Engineering")
@@ -86,8 +86,8 @@ func `CLAIM-003: then(_:) implements lexicographic chaining`() {
 @Test
 func `CLAIM-004: KeyPath-based projection (NON-SENDABLE)`() {
     // KeyPath-based comparators work but are NOT Sendable
-    let byAge = Ordering.NonSendableComparator<Person>.by(\.age)
-    let byName = Ordering.NonSendableComparator<Person>.by(\.name)
+    let byAge = Order.NonSendableComparator<Person>.by(\.age)
+    let byName = Order.NonSendableComparator<Person>.by(\.name)
 
     let alice = Person(name: "Alice", age: 30, department: "Engineering")
     let bob = Person(name: "Bob", age: 25, department: "Sales")
@@ -103,7 +103,7 @@ func `CLAIM-004: KeyPath-based projection (NON-SENDABLE)`() {
 /// [CLAIM-005] callAsFunction enables `comparator(a, b)` syntax
 @Test
 func `CLAIM-005: callAsFunction enables comparator(a, b) syntax`() {
-    let comparator: Ordering.Comparator<Int> = .ascending
+    let comparator: Order.Comparator<Int> = .ascending
 
     // Test the call syntax directly
     let result1 = comparator(1, 2)
@@ -120,12 +120,12 @@ func `CLAIM-005: callAsFunction enables comparator(a, b) syntax`() {
 /// [CLAIM-006] Direction enum supports reversal
 @Test
 func `CLAIM-006: Direction enum supports reversal`() {
-    #expect(Ordering.Direction.ascending.reversed == .descending)
-    #expect(Ordering.Direction.descending.reversed == .ascending)
+    #expect(Order.Direction.ascending.reversed == .descending)
+    #expect(Order.Direction.descending.reversed == .ascending)
 
     // Test involution
-    #expect(Ordering.Direction.ascending.reversed.reversed == .ascending)
-    #expect(Ordering.Direction.descending.reversed.reversed == .descending)
+    #expect(Order.Direction.ascending.reversed.reversed == .ascending)
+    #expect(Order.Direction.descending.reversed.reversed == .descending)
 
     print("CLAIM-006: VERIFIED - Direction enum supports reversal as involution")
 }
@@ -134,19 +134,19 @@ func `CLAIM-006: Direction enum supports reversal`() {
 @Test
 func `CLAIM-007: Comparator works with Comparable types`() {
     // Test with Int
-    let intComparator: Ordering.Comparator<Int> = .ascending
+    let intComparator: Order.Comparator<Int> = .ascending
     #expect(intComparator(1, 2) == .less)
 
     // Test with String
-    let stringComparator: Ordering.Comparator<String> = .ascending
+    let stringComparator: Order.Comparator<String> = .ascending
     #expect(stringComparator("apple", "banana") == .less)
 
     // Test with Double
-    let doubleComparator: Ordering.Comparator<Double> = .ascending
+    let doubleComparator: Order.Comparator<Double> = .ascending
     #expect(doubleComparator(1.5, 2.5) == .less)
 
     // Test descending static property
-    let descending: Ordering.Comparator<Int> = .descending
+    let descending: Order.Comparator<Int> = .descending
     #expect(descending(1, 2) == .greater)
 
     print("CLAIM-007: VERIFIED - Comparator works with Comparable types")
@@ -156,7 +156,7 @@ func `CLAIM-007: Comparator works with Comparable types`() {
 @Test
 func `CLAIM-008: PartialComparator returns Optional`() {
     // Create a partial comparator for floating point that treats NaN as incomparable
-    let floatComparator = Ordering.PartialComparator<Double> { lhs, rhs in
+    let floatComparator = Order.PartialComparator<Double> { lhs, rhs in
         if lhs.isNaN || rhs.isNaN {
             return nil
         }
@@ -250,11 +250,11 @@ func `ASSUMP-004: Closures capturing @Sendable closures are @Sendable`() {
 /// [ASSUMP-005] Nested generic types compile correctly
 @Test
 func `ASSUMP-005: Nested generic types compile correctly`() {
-    // Ordering.Comparator<T> is a nested generic type
-    let comparator: Ordering.Comparator<Int> = .ascending
+    // Order.Comparator<T> is a nested generic type
+    let comparator: Order.Comparator<Int> = .ascending
 
-    // Ordering.Projection<Root, Value> has two generic parameters
-    let projection = Ordering.Projection<Person, Int>({ $0.age })
+    // Order.Projection<Root, Value> has two generic parameters
+    let projection = Order.Projection<Person, Int>({ $0.age })
 
     let person = Person(name: "Alice", age: 30, department: "Engineering")
 
@@ -272,7 +272,7 @@ func `ASSUMP-005: Nested generic types compile correctly`() {
 /// Test that Direction is a proper involution
 @Test
 func `Algebraic: Direction involution property`() {
-    for direction in Ordering.Direction.allCases {
+    for direction in Order.Direction.allCases {
         #expect(direction.reversed.reversed == direction,
                "Direction.\(direction).reversed.reversed should equal Direction.\(direction)")
     }
@@ -283,8 +283,8 @@ func `Algebraic: Direction involution property`() {
 @Test
 func `Algebraic: Comparator identity element`() {
     // The identity comparator returns .equal for all inputs
-    let identity = Ordering.Comparator<Int> { _, _ in .equal }
-    let ascending: Ordering.Comparator<Int> = .ascending
+    let identity = Order.Comparator<Int> { _, _ in .equal }
+    let ascending: Order.Comparator<Int> = .ascending
 
     // Test: c ⊕ identity = c
     let rightIdentity = ascending.then(identity)
@@ -310,10 +310,10 @@ func `Algebraic: Comparator identity element`() {
 func `Sendable: All Sendable types conform correctly`() async {
     // These lines will fail compilation if types are not Sendable
 
-    let direction: Ordering.Direction = .ascending
-    let comparator: Ordering.Comparator<Int> = .ascending
-    let projection = Ordering.Projection<Person, Int>({ $0.age })
-    let partialComparator = Ordering.PartialComparator<Double> { lhs, rhs in
+    let direction: Order.Direction = .ascending
+    let comparator: Order.Comparator<Int> = .ascending
+    let projection = Order.Projection<Person, Int>({ $0.age })
+    let partialComparator = Order.PartialComparator<Double> { lhs, rhs in
         Comparison.Result(lhs, rhs)
     }
 
@@ -332,7 +332,7 @@ func `Sendable: All Sendable types conform correctly`() async {
 @Test
 func `Sendable: NonSendable types correctly omit Sendable`() {
     // NonSendableComparator should NOT be Sendable
-    let comparator = Ordering.NonSendableComparator<Person>.by(\.age)
+    let comparator = Order.NonSendableComparator<Person>.by(\.age)
 
     // This comparator works locally
     let alice = Person(name: "Alice", age: 30, department: "Engineering")
@@ -348,8 +348,8 @@ func `Sendable: NonSendable types correctly omit Sendable`() {
 
 @Test
 func `Projection: Direction integration (Sendable)`() {
-    let ascending = Ordering.Projection<Person, Int>({ $0.age }, direction: .ascending)
-    let descending = Ordering.Projection<Person, Int>({ $0.age }, direction: .descending)
+    let ascending = Order.Projection<Person, Int>({ $0.age }, direction: .ascending)
+    let descending = Order.Projection<Person, Int>({ $0.age }, direction: .descending)
 
     let young = Person(name: "Young", age: 20, department: "A")
     let old = Person(name: "Old", age: 40, department: "B")
@@ -369,8 +369,8 @@ func `Projection: Direction integration (Sendable)`() {
 
 @Test
 func `Projection: KeyPath-based (NonSendable)`() {
-    let ascending = Ordering.NonSendableProjection<Person, Int>(\.age, direction: .ascending)
-    let descending = Ordering.NonSendableProjection<Person, Int>(\.age, direction: .descending)
+    let ascending = Order.NonSendableProjection<Person, Int>(\.age, direction: .ascending)
+    let descending = Order.NonSendableProjection<Person, Int>(\.age, direction: .descending)
 
     let young = Person(name: "Young", age: 20, department: "A")
     let old = Person(name: "Old", age: 40, department: "B")
@@ -397,7 +397,7 @@ func `DISCOVERY: KeyPath is NOT Sendable in Swift 6`() {
     // The design paper proposed:
     //   public static func by<Value: Comparable>(
     //       _ keyPath: KeyPath<T, Value>
-    //   ) -> Ordering.Comparator<T>
+    //   ) -> Order.Comparator<T>
     //
     // This DOES NOT COMPILE with Swift 6 strict concurrency because
     // capturing a KeyPath in a @Sendable closure is forbidden.

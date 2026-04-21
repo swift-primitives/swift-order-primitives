@@ -9,10 +9,10 @@
 
 public import Comparison_Primitives
 
-extension Ordering.Comparator {
+extension Order.Comparator {
     /// A comparator for partially ordered types.
     ///
-    /// Unlike ``Ordering/Comparator`` which always returns a result, `Partial`
+    /// Unlike ``Order/Comparator`` which always returns a result, `Partial`
     /// returns `nil` when two values are incomparable. This is useful for
     /// types with partial orders, such as floating-point numbers where
     /// NaN is incomparable with any value.
@@ -20,7 +20,7 @@ extension Ordering.Comparator {
     /// ## Example
     ///
     /// ```swift
-    /// let comparator = Ordering.Comparator<Double>.Partial { lhs, rhs in
+    /// let comparator = Order.Comparator<Double>.Partial { lhs, rhs in
     ///     guard !lhs.isNaN && !rhs.isNaN else { return nil }
     ///     return Comparison(lhs, rhs)
     /// }

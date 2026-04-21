@@ -9,15 +9,15 @@
 
 public import Comparison_Primitives
 
-extension Ordering.Comparator where T: ~Copyable {
+extension Order.Comparator where T: ~Copyable {
     /// Creates a comparator using a key-extracting function.
     ///
     /// The comparator extracts the key from each value and compares
     /// the keys using their natural ordering.
     ///
     /// ```swift
-    /// let byAge = Ordering.Comparator<Person>.by { $0.age }
-    /// let byName = Ordering.Comparator<Person>.by { $0.name }
+    /// let byAge = Order.Comparator<Person>.by { $0.age }
+    /// let byName = Order.Comparator<Person>.by { $0.name }
     /// ```
     ///
     /// - Note: KeyPath-based overloads (`.by(\.age)`) are not provided because
@@ -29,9 +29,9 @@ extension Ordering.Comparator where T: ~Copyable {
     @inlinable
     public static func by<Value: Comparison.`Protocol` & ~Copyable>(
         _ selector: @escaping @Sendable (borrowing T) -> Value
-    ) -> Ordering.Comparator<T> {
+    ) -> Order.Comparator<T> {
         nonisolated(unsafe) let _: Value.Type = Value.self
-        return Ordering.Comparator { lhs, rhs in
+        return Order.Comparator { lhs, rhs in
             Comparison(selector(lhs), selector(rhs))
         }
     }
@@ -42,7 +42,7 @@ extension Ordering.Comparator where T: ~Copyable {
     /// the keys using the provided comparator.
     ///
     /// ```swift
-    /// let byNameCaseInsensitive = Ordering.Comparator<Person>.by(
+    /// let byNameCaseInsensitive = Order.Comparator<Person>.by(
     ///     { $0.name.lowercased() },
     ///     using: .ascending
     /// )
@@ -56,9 +56,9 @@ extension Ordering.Comparator where T: ~Copyable {
     @inlinable
     public static func by<Value: ~Copyable>(
         _ selector: @escaping @Sendable (borrowing T) -> Value,
-        using comparator: Ordering.Comparator<Value>
-    ) -> Ordering.Comparator<T> {
-        Ordering.Comparator { lhs, rhs in
+        using comparator: Order.Comparator<Value>
+    ) -> Order.Comparator<T> {
+        Order.Comparator { lhs, rhs in
             comparator(selector(lhs), selector(rhs))
         }
     }

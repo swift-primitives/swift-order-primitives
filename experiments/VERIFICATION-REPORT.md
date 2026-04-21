@@ -1,15 +1,15 @@
-# Experiment Discovery Report: swift-ordering-primitives
+# Experiment Discovery Report: swift-order-primitives
 
 **Date**: 2026-01-22
-**Package**: swift-ordering-primitives
-**Design Document**: `/Users/coen/Developer/swift-primitives/swift-ordering-primitives/docs/Ordering-Primitives-Design.md`
-**Experiment Location**: `/Users/coen/Developer/swift-primitives/swift-ordering-primitives/experiments/`
+**Package**: swift-order-primitives
+**Design Document**: `/Users/coen/Developer/swift-primitives/swift-order-primitives/docs/Order-Primitives-Design.md`
+**Experiment Location**: `/Users/coen/Developer/swift-primitives/swift-order-primitives/experiments/`
 
 ---
 
 ## Executive Summary
 
-This report documents the results of executing the Experiment Discovery workflow [EXP-012 through EXP-017] for the `swift-ordering-primitives` design paper. The experiment verified 8 claims and 5 assumptions from the design document against Swift 6 strict concurrency mode.
+This report documents the results of executing the Experiment Discovery workflow [EXP-012 through EXP-017] for the `swift-order-primitives` design paper. The experiment verified 8 claims and 5 assumptions from the design document against Swift 6 strict concurrency mode.
 
 **Critical Finding**: `KeyPath<Root, Value>` is **NOT Sendable** in Swift 6. This requires revision of Section 5.3.4 of the design paper.
 
@@ -28,11 +28,11 @@ This report documents the results of executing the Experiment Discovery workflow
 
 | Type | Description | Paper Section |
 |------|-------------|---------------|
-| `Ordering` | Namespace enum | 5.1 |
-| `Ordering.Direction` | Ascending/descending enum | 5.2 |
-| `Ordering.Comparator<T>` | Reified comparator with @Sendable closure | 5.3 |
-| `Ordering.Projection<Root, Value>` | Key-path based ordering | 5.4 |
-| `Ordering.PartialComparator<T>` | Optional result for partial orders | 5.5 |
+| `Order` | Namespace enum | 5.1 |
+| `Order.Direction` | Ascending/descending enum | 5.2 |
+| `Order.Comparator<T>` | Reified comparator with @Sendable closure | 5.3 |
+| `Order.Projection<Root, Value>` | Key-path based ordering | 5.4 |
+| `Order.PartialComparator<T>` | Optional result for partial orders | 5.5 |
 
 ### Proposed APIs
 
@@ -58,7 +58,7 @@ This report documents the results of executing the Experiment Discovery workflow
 
 **Verification Code**:
 ```swift
-let comparator = Ordering.Comparator<Int> { lhs, rhs in
+let comparator = Order.Comparator<Int> { lhs, rhs in
     Comparison.Result(lhs, rhs)
 }
 #expect(comparator(1, 2) == .less)
@@ -66,7 +66,7 @@ let comparator = Ordering.Comparator<Int> { lhs, rhs in
 
 **Result**: **VERIFIED**
 
-**Evidence**: The `Ordering.Comparator<T>` struct successfully compiles with an internal `@Sendable (T, T) -> Comparison.Result` closure, and the comparator correctly produces comparison results.
+**Evidence**: The `Order.Comparator<T>` struct successfully compiles with an internal `@Sendable (T, T) -> Comparison.Result` closure, and the comparator correctly produces comparison results.
 
 ---
 
@@ -75,7 +75,7 @@ let comparator = Ordering.Comparator<Int> { lhs, rhs in
 
 **Verification Code**:
 ```swift
-let ascending: Ordering.Comparator<Int> = .ascending
+let ascending: Order.Comparator<Int> = .ascending
 let doubleReversed = ascending.reversed.reversed
 #expect(doubleReversed(1, 2) == ascending(1, 2))
 ```
@@ -91,9 +91,9 @@ let doubleReversed = ascending.reversed.reversed
 
 **Verification Code**:
 ```swift
-let byAge = Ordering.Comparator<Person>.by { $0.age }
-let byName = Ordering.Comparator<Person>.by { $0.name }
-let byDept = Ordering.Comparator<Person>.by { $0.department }
+let byAge = Order.Comparator<Person>.by { $0.age }
+let byName = Order.Comparator<Person>.by { $0.name }
+let byDept = Order.Comparator<Person>.by { $0.department }
 
 let leftGrouped = byAge.then(byName).then(byDept)
 let rightGrouped = byAge.then(byName.then(byDept))
@@ -116,10 +116,10 @@ let rightGrouped = byAge.then(byName.then(byDept))
 **Verification Code**:
 ```swift
 // This does NOT compile with Sendable Comparator:
-// let byAge = Ordering.Comparator<Person>.by(\.age)  // ERROR
+// let byAge = Order.Comparator<Person>.by(\.age)  // ERROR
 
 // This works with NonSendableComparator:
-let byAge = Ordering.NonSendableComparator<Person>.by(\.age)
+let byAge = Order.NonSendableComparator<Person>.by(\.age)
 #expect(byAge(alice, bob) == .greater)
 ```
 
@@ -138,7 +138,7 @@ let byAge = Ordering.NonSendableComparator<Person>.by(\.age)
 
 **Verification Code**:
 ```swift
-let comparator: Ordering.Comparator<Int> = .ascending
+let comparator: Order.Comparator<Int> = .ascending
 let result = comparator(1, 2)  // Uses callAsFunction
 #expect(result == .less)
 ```
@@ -150,13 +150,13 @@ let result = comparator(1, 2)  // Uses callAsFunction
 ---
 
 ### CLAIM-006: Direction Enum Reversal
-**Statement**: `Ordering.Direction` supports reversal with involution property.
+**Statement**: `Order.Direction` supports reversal with involution property.
 
 **Verification Code**:
 ```swift
-#expect(Ordering.Direction.ascending.reversed == .descending)
-#expect(Ordering.Direction.descending.reversed == .ascending)
-#expect(Ordering.Direction.ascending.reversed.reversed == .ascending)
+#expect(Order.Direction.ascending.reversed == .descending)
+#expect(Order.Direction.descending.reversed == .ascending)
+#expect(Order.Direction.ascending.reversed.reversed == .ascending)
 ```
 
 **Result**: **VERIFIED**
@@ -170,9 +170,9 @@ let result = comparator(1, 2)  // Uses callAsFunction
 
 **Verification Code**:
 ```swift
-let intComparator: Ordering.Comparator<Int> = .ascending
-let stringComparator: Ordering.Comparator<String> = .ascending
-let descending: Ordering.Comparator<Int> = .descending
+let intComparator: Order.Comparator<Int> = .ascending
+let stringComparator: Order.Comparator<String> = .ascending
+let descending: Order.Comparator<Int> = .descending
 
 #expect(intComparator(1, 2) == .less)
 #expect(stringComparator("apple", "banana") == .less)
@@ -190,7 +190,7 @@ let descending: Ordering.Comparator<Int> = .descending
 
 **Verification Code**:
 ```swift
-let floatComparator = Ordering.PartialComparator<Double> { lhs, rhs in
+let floatComparator = Order.PartialComparator<Double> { lhs, rhs in
     if lhs.isNaN || rhs.isNaN { return nil }
     return Comparison.Result(lhs, rhs)
 }
@@ -248,7 +248,7 @@ let floatComparator = Ordering.PartialComparator<Double> { lhs, rhs in
 ---
 
 ### ASSUMP-005: Nested Generic Types
-**Statement**: Nested generic types like `Ordering.Comparator<T>` compile correctly.
+**Statement**: Nested generic types like `Order.Comparator<T>` compile correctly.
 
 **Result**: **VERIFIED**
 
@@ -264,7 +264,7 @@ let floatComparator = Ordering.PartialComparator<Double> { lhs, rhs in
 ```swift
 public static func by<Value: Comparable>(
     _ keyPath: KeyPath<T, Value>
-) -> Ordering.Comparator<T>
+) -> Order.Comparator<T>
 ```
 
 **Does NOT compile** with Swift 6 strict concurrency because `KeyPath<T, Value>` is not `Sendable`.
@@ -277,7 +277,7 @@ in a '@Sendable' closure [#SendableClosureCaptures]
 
 ### Impact
 - Design paper Section 5.3.4 (Projection via KeyPath) requires revision
-- Section 5.4 (Ordering.Projection with KeyPath initializer) requires revision
+- Section 5.4 (Order.Projection with KeyPath initializer) requires revision
 - All KeyPath-based APIs cannot be part of the Sendable `Comparator<T>` type
 
 ### Recommended Workarounds
@@ -286,13 +286,13 @@ in a '@Sendable' closure [#SendableClosureCaptures]
    ```swift
    // Instead of: .by(\.age)
    // Use: .by { $0.age }
-   let byAge = Ordering.Comparator<Person>.by { $0.age }
+   let byAge = Order.Comparator<Person>.by { $0.age }
    ```
 
 2. **Non-Sendable variant** (implemented in experiment):
    ```swift
    // For local (non-concurrent) use only
-   let byAge = Ordering.NonSendableComparator<Person>.by(\.age)
+   let byAge = Order.NonSendableComparator<Person>.by(\.age)
    ```
 
 3. **Await Swift Evolution**: Monitor Swift proposals for making KeyPath Sendable.
@@ -331,11 +331,11 @@ All 20 verification tests pass, confirming:
 |------|---------|
 | `experiments/Package.swift` | Swift 6 package manifest |
 | `experiments/Sources/OrderingExperiments/Comparison.swift` | Mock Comparison.Result |
-| `experiments/Sources/OrderingExperiments/Ordering.swift` | Namespace enum |
-| `experiments/Sources/OrderingExperiments/Ordering.Direction.swift` | Direction enum |
-| `experiments/Sources/OrderingExperiments/Ordering.Comparator.swift` | Comparator + NonSendableComparator |
-| `experiments/Sources/OrderingExperiments/Ordering.Projection.swift` | Projection + NonSendableProjection |
-| `experiments/Sources/OrderingExperiments/Ordering.PartialComparator.swift` | PartialComparator |
+| `experiments/Sources/OrderingExperiments/Order.swift` | Namespace enum |
+| `experiments/Sources/OrderingExperiments/Order.Direction.swift` | Direction enum |
+| `experiments/Sources/OrderingExperiments/Order.Comparator.swift` | Comparator + NonSendableComparator |
+| `experiments/Sources/OrderingExperiments/Order.Projection.swift` | Projection + NonSendableProjection |
+| `experiments/Sources/OrderingExperiments/Order.PartialComparator.swift` | PartialComparator |
 | `experiments/Tests/OrderingExperimentsTests/ClaimVerificationTests.swift` | All verification tests |
 | `experiments/VERIFICATION-REPORT.md` | This report |
 
@@ -343,7 +343,7 @@ All 20 verification tests pass, confirming:
 
 ## Conclusion
 
-The `swift-ordering-primitives` design is **sound with one critical exception**: the KeyPath-based APIs cannot be implemented as Sendable in Swift 6.
+The `swift-order-primitives` design is **sound with one critical exception**: the KeyPath-based APIs cannot be implemented as Sendable in Swift 6.
 
 **Recommendations**:
 1. Revise the design paper to use closure-based selectors for the Sendable API

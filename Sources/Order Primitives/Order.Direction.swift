@@ -7,7 +7,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-extension Ordering {
+extension Order {
     /// Direction of ordering: ascending or descending.
     ///
     /// Use `Direction` to parameterize sort direction in APIs:
@@ -15,7 +15,7 @@ extension Ordering {
     /// ```swift
     /// func sort<Value: Comparison.`Protocol`>(
     ///     by selector: (Element) -> Value,
-    ///     direction: Ordering.Direction = .ascending
+    ///     direction: Order.Direction = .ascending
     /// )
     /// ```
     public enum Direction: Sendable, Hashable, CaseIterable {

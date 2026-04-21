@@ -1,8 +1,8 @@
-// MARK: - Ordering.Projection
+// MARK: - Order.Projection
 // DISCOVERY: The original design proposed Projection<Root, Value> with KeyPath support.
 // However, KeyPath is NOT Sendable in Swift 6. This file documents both variants.
 
-extension Ordering {
+extension Order {
     /// A projection that extracts an orderable value from a root type.
     ///
     /// Projections can be composed and transformed before being converted
@@ -36,8 +36,8 @@ extension Ordering {
 
         /// Converts this projection to a comparator.
         @inlinable
-        public var comparator: Ordering.Comparator<Root> {
-            let base = Ordering.Comparator<Root>.by(extract)
+        public var comparator: Order.Comparator<Root> {
+            let base = Order.Comparator<Root>.by(extract)
             return direction == .ascending ? base : base.reversed
         }
     }
@@ -45,11 +45,11 @@ extension Ordering {
 
 // MARK: - Non-Sendable Projection (KeyPath-based)
 
-extension Ordering {
+extension Order {
     /// A non-Sendable projection that uses KeyPath for extraction.
     ///
     /// - Important: This type exists because `KeyPath` is not `Sendable` in Swift 6.
-    ///   Use `Ordering.Projection` with closure-based extraction for Sendable projections.
+    ///   Use `Order.Projection` with closure-based extraction for Sendable projections.
     public struct NonSendableProjection<Root, Value: Comparable> {
         /// The key extraction function.
         @usableFromInline
@@ -86,8 +86,8 @@ extension Ordering {
 
         /// Converts this projection to a non-Sendable comparator.
         @inlinable
-        public var comparator: Ordering.NonSendableComparator<Root> {
-            let base = Ordering.NonSendableComparator<Root> { lhs, rhs in
+        public var comparator: Order.NonSendableComparator<Root> {
+            let base = Order.NonSendableComparator<Root> { lhs, rhs in
                 Comparison.Result(extract(lhs), extract(rhs))
             }
             return direction == .ascending ? base : base.reversed

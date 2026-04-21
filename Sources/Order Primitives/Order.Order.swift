@@ -7,10 +7,10 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-extension Ordering {
+extension Order {
     /// Tag type for `.order` property extensions.
     ///
-    /// `Ordering.Order` is a phantom type used with `Property.View` to provide
+    /// `Order.Order` is a phantom type used with `Property.View` to provide
     /// fluent APIs for checking relative ordering of values using comparators.
     ///
     /// ## Example
@@ -21,7 +21,7 @@ extension Ordering {
     ///     let age: Int
     /// }
     ///
-    /// let byAge = Ordering.Comparator<Person> { lhs, rhs in
+    /// let byAge = Order.Comparator<Person> { lhs, rhs in
     ///     Comparison(comparing: lhs.age, to: rhs.age)
     /// }
     ///

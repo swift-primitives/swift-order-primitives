@@ -24,7 +24,7 @@ public import Property_Primitives
 // Without ~Copyable, the extension gains implicit `where Base: Copyable` on 6.4,
 // making it unreachable for ~Copyable types.
 #if compiler(>=6.4)
-extension Property.View where Tag == Ordering.Order, Base: Swift.Comparable & ~Copyable {
+extension Property.View where Tag == Order.Order, Base: Swift.Comparable & ~Copyable {
 
     @_disfavoredOverload
     @inlinable
@@ -45,7 +45,7 @@ extension Property.View where Tag == Ordering.Order, Base: Swift.Comparable & ~C
     }
 }
 #else
-extension Property.View where Tag == Ordering.Order, Base: Swift.Comparable {
+extension Property.View where Tag == Order.Order, Base: Swift.Comparable {
 
     /// Check if self comes before other using natural ascending order.
     ///
@@ -108,16 +108,16 @@ extension Property.View where Tag == Ordering.Order, Base: Swift.Comparable {
 /// ```
 ///
 /// Note: Marked `@_disfavoredOverload` so types that also conform to
-/// `Ordering.Orderable` use the `Orderable` extension.
+/// `Order.Orderable` use the `Orderable` extension.
 extension Swift.Comparable where Self: Copyable {
     /// Access fluent ordering APIs.
     ///
     /// Returns a `Property.View` that provides ordering methods like
     /// `.isBefore(_:)`, `.isAfter(_:)`, `.isEquivalent(to:)`.
     @_disfavoredOverload
-    public var order: Property<Ordering.Order, Self>.View {
+    public var order: Property<Order.Order, Self>.View {
         mutating _read {
-            yield unsafe Property<Ordering.Order, Self>.View(&self)
+            yield unsafe Property<Order.Order, Self>.View(&self)
         }
     }
 }
