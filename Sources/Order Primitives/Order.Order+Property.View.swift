@@ -26,7 +26,7 @@ extension Property.View where Tag == Order.Order, Base: ~Copyable {
         _ other: borrowing Base,
         by comparator: Order.Comparator<Base>
     ) -> Bool {
-        unsafe comparator(base.pointee, other).isLess
+        unsafe comparator(base.value, other).isLess
     }
 
     /// Check if self comes after other using the comparator.
@@ -42,7 +42,7 @@ extension Property.View where Tag == Order.Order, Base: ~Copyable {
         _ other: borrowing Base,
         by comparator: Order.Comparator<Base>
     ) -> Bool {
-        unsafe comparator(base.pointee, other).isGreater
+        unsafe comparator(base.value, other).isGreater
     }
 
     /// Check if self is equivalent to other using the comparator.
@@ -61,7 +61,7 @@ extension Property.View where Tag == Order.Order, Base: ~Copyable {
         to other: borrowing Base,
         by comparator: Order.Comparator<Base>
     ) -> Bool {
-        unsafe comparator(base.pointee, other).isEqual
+        unsafe comparator(base.value, other).isEqual
     }
 }
 
