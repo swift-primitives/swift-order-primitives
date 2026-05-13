@@ -1,0 +1,15 @@
+# .github/metadata.yaml
+# Triaged 2026-04-29 — anomaly-fix pass after wave-4 PR-branch triage didn't apply.
+# 2026-05-13: description tightened + topics expanded for Story 2 cohort discoverability.
+# 2026-05-13: discussion thread URL recorded (sync-discussion-threads.yml run 25783323211).
+description: "Reified Sendable comparators for Swift — Order.Comparator, projections, and the .order fluent property."
+topics:
+  - primitives
+  - order
+  - comparator
+  - data-structures
+  - sendable
+homepage: "https://swift-institute.org"
+readme:
+  family: E
+discussion: "https://github.com/orgs/swift-institute/discussions/27"
