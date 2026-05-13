@@ -6,8 +6,6 @@ A reified-comparator primitive — `Order.Comparator<T>`, a `Sendable` value tha
 
 `Order` is the *operation* side of the comparison trichotomy: `Comparison` (from [`swift-comparison-primitives`](https://github.com/swift-primitives/swift-comparison-primitives)) names the **result** of a comparison (`.less` / `.equal` / `.greater`); `Order.Comparator<T>` names a **rule** for producing that result for two `T`s. Sorting and predicate code reaches for `Order` when the rule itself is the value being passed around; reaches for `Comparison.\`Protocol\`` when a single type's natural ordering is enough.
 
-This package is part of **Story 2 of the data-structures cohort** (`data-structures-launch-2026`): seven packages introducing typed indexing and sequences — **order**, index, sequence, collection, input, cyclic, vector. Story 1 (cardinal, ordinal, affine) shipped 2026-05-12. Within Story 2, `order` is an independent root — it depends only on Tier 0 primitives (`swift-comparison-primitives`, `swift-property-primitives`) and has no internal-cohort dependency.
-
 ---
 
 ## Quick Start
@@ -76,7 +74,7 @@ Three packages divide the labor of ordering values:
 | **`swift-order-primitives`** (this package) | What is the *rule* that produces that result for a given pair? | `Order.Comparator<T>` reified comparators with chaining / projection / reversal; `Order.Direction`; `Order.Projection<Root, Value>`; the `.order` fluent property |
 | [`swift-property-primitives`](https://github.com/swift-primitives/swift-property-primitives) | How does a fluent `.<verb>` chain attach to a value without forcing it into a protocol? | `Property<Tag, Base>` with `.Inout` for in-place predicates; `Order` is the phantom tag carried into `Property<Order, Self>.Inout` |
 
-`Comparison` is the answer at the *result* layer; `Order.Comparator` is the answer at the *rule* layer. A reviewer asking "couldn't `Order.Comparator` live in `swift-comparison-primitives`?" is asking whether to merge the result and the rule into one package. The boundary is deliberate: most code only needs one of the two — a sort routine takes a comparator, a tight inner loop takes a `Comparison.\`Protocol\``-conformant type — and the split keeps the imports honest about which one the call site actually needs.
+`Comparison` is the answer at the *result* layer; `Order.Comparator` is the answer at the *rule* layer. The boundary is deliberate: most code only needs one of the two — a sort routine takes a comparator, a tight inner loop takes a `Comparison.\`Protocol\``-conformant type — and the split keeps the imports honest about which one the call site actually needs.
 
 ---
 
@@ -100,26 +98,12 @@ Order's surface lives under the `Order` namespace enum:
 
 The `Order` enum is the namespace AND the phantom tag for `Property<Order, Base>.Inout`. The same enum plays both roles: types live under it, and the type itself anchors which `Property.Inout` extensions get the `.order.<verb>` predicates.
 
-Two upstream dependencies, both already-public Tier 0 primitives:
+Two upstream dependencies:
 
 - [`swift-comparison-primitives`](https://github.com/swift-primitives/swift-comparison-primitives) — provides `Comparison` and `Comparison.\`Protocol\``
 - [`swift-property-primitives`](https://github.com/swift-primitives/swift-property-primitives) — provides `Property<Tag, Base>` and `.Inout`
 
 Foundation-free. No platform conditionals. No concurrency surface in sources beyond the `@Sendable` constraint on stored closures.
-
----
-
-## Why `is`-prefix predicates?
-
-`alice.order.isBefore(bob, by: byAge)` reads as a yes/no question — a Boolean-question predicate in the stdlib idiom (compare `Int.isMultiple(of:)`, `Sequence.isEmpty`, `Float.isFinite`). The `.order` namespace before it already supplies the *what's-this-about* context, so the predicate name only needs to express the question.
-
-Alternatives considered and rejected:
-
-- `.lessThan(_:)` / `.greaterThan(_:)` / `.equivalent(to:)` — drops the verb form. Reads as data extraction, not a question; tested poorly against the `.order` namespace ("`order.lessThan`" suggests a result type).
-- `.precedes(_:)` / `.follows(_:)` / `.matches(_:)` — distinctive but inconsistent with stdlib's `is`-prefix Boolean convention.
-- `.before(_:)` / `.after(_:)` / `.equivalent(to:)` — verb-form but loses the Boolean-question signal.
-
-The `is`-prefix form is intentional and stable; it is not the `verbObject`-form compound name pattern (`openWrite`, `walkFiles`) the ecosystem reserves for the case where a single identifier carries both an action and an object. The `.order.<verb>` chain partitions naturally: `.order` names the operation domain, `is<X>` names the predicate within that domain.
 
 ---
 
@@ -133,25 +117,11 @@ The `@Sendable` constraint on the closure does not propagate a `Copyable` upper 
 
 ---
 
-## Sendable metatype captures (accepted)
-
-`Order.Comparator` extensions that need to project a generic parameter through `@Sendable` produce three `#SendableMetatypes` warnings on `swift build`:
-
-- `Order.Comparator+Comparable.swift` (the `Comparison.\`Protocol\`` init)
-- `Order.Comparator+Projection.swift` (the `.by(_:)` factory)
-- `Order.Comparator+Swift.Comparable.swift` (the `Swift.Comparable` bridging)
-
-These are accepted in `Audits/audit.md` ("Accepted Compiler Warnings — 2026-03-25"). Metatypes (`T.Type`) are pointers into read-only type metadata in the binary, inherently thread-safe; the diagnostic is conservative because the type system does not yet distinguish "the metatype of `T`" (always safe) from "a value of type `T`" (may not be safe). The `nonisolated(unsafe) let _: T.Type = T.self` line at each site documents the intent. Future Swift evolution is expected to make metatypes unconditionally `Sendable` and clear the diagnostic.
-
-The warnings do not propagate into consumer builds when `Order.Comparator` is imported via the umbrella product.
-
----
-
 ## Performance posture
 
-`Order.Comparator<T>` is a closure-stored struct; every method on it carries `@inlinable`. The intent is for the optimizer to dissolve the indirection at sites where the comparator is a compile-time-known `.ascending` / `.descending` or a closure literal — the cost reduces to the underlying `Comparison.\`Protocol\`` `<` call.
+`Order.Comparator<T>` is a closure-stored struct; every method on it carries `@inlinable`. The intent is for the optimizer to dissolve the indirection at sites where the comparator is a compile-time-known `.ascending` / `.descending` or a closure literal — the cost reduces to the underlying `Comparison.\`Protocol\`` `<` call. If a hot inner loop requires direct `<` access, reach for `Comparison.\`Protocol\``'s natural ordering rather than wrapping it in a `Comparator` value.
 
-0.1.0 ships the API surface and the semantics. Comparator-vs-direct-`<` benchmarks, and the `Comparator.Partial` overhead profile, land in a follow-up. If a hot inner loop requires direct `<` access today, reach for `Comparison.\`Protocol\``'s natural ordering rather than wrapping it in a `Comparator` value.
+A few `Order.Comparator` extensions emit `#SendableMetatypes` warnings on `swift build` (the metatype `T.Type` is inherently thread-safe but the diagnostic is conservative). They do not propagate into consumer builds via the umbrella product.
 
 ---
 
@@ -161,15 +131,15 @@ The warnings do not propagate into consumer builds when `Order.Comparator` is im
 |----------|--------|
 | macOS 26 | Full support |
 | iOS / tvOS / watchOS / visionOS | Supported |
-| Linux | Full support (post-flip CI matrix) |
-| Windows | Full support (post-flip CI matrix) |
-| Swift Embedded | Heuristic-supported (no Foundation, no concurrency surface) — first-party Embedded matrix runs post-flip |
+| Linux | Full support |
+| Windows | Full support |
+| Swift Embedded | Supported (Wasm SDK + Swift 6.4-dev nightly CI matrix passes) |
 
 ---
 
 ## Stability
 
-Pre-1.0. The public API of `Order` and its members may change before 0.1.0 is tagged; consumers depending on `branch: "main"` should expect breaking changes to surface in commit messages and the audit trail under `Audits/`. Once tagged, the package follows the institute SemVer convention: post-1.0 breaking changes ship behind a major bump.
+Pre-1.0. The public API of `Order` and its members may change while the package remains on `branch: "main"`; consumers should expect breaking changes to surface in commit messages until the first tag. Once tagged, the package follows institute SemVer: post-1.0 breaking changes ship behind a major bump.
 
 The phantom-tag identity of the `Order` namespace enum is part of the public surface — code reaching for `Property<Order, …>.Inout` directly is binding to that identity. Renaming the namespace (or splitting types out of it) is a breaking change after tag.
 
@@ -177,16 +147,10 @@ The phantom-tag identity of the `Order` namespace enum is part of the public sur
 
 ## Related Packages
 
-Direct dependencies (both already-public Tier 0 primitives):
+Direct dependencies:
 
 - [swift-comparison-primitives](https://github.com/swift-primitives/swift-comparison-primitives) — `Comparison` and `Comparison.\`Protocol\``
 - [swift-property-primitives](https://github.com/swift-primitives/swift-property-primitives) — `Property<Tag, Base>` and `Property.Inout`
-
-Cohort siblings (Story 2 — Typed indexing and sequences):
-
-- **order**, index, sequence, collection, input, cyclic, vector — see the [`data-structures-launch-2026`](https://github.com/swift-institute) cohort narrative.
-
-Story 1 sibling primitives ([`cardinal`](https://github.com/swift-primitives/swift-cardinal-primitives), [`ordinal`](https://github.com/swift-primitives/swift-ordinal-primitives), [`affine`](https://github.com/swift-primitives/swift-affine-primitives)) shipped 2026-05-12 and supply the counting / position / displacement primitives that Story 2 builds on.
 
 ---
 

@@ -13,7 +13,7 @@ A reified-comparator primitive — `Order.Comparator<T>`, a `Sendable` value cap
 
 The `Order` namespace enum (``Order_Primitives/Order``) plays a dual role: it is the surface for `Order.Direction`, `Order.Comparator`, `Order.Projection`, `Order.Orderable`, AND it is the phantom tag carried into `Property<Order, Base>.Inout` so the `.order.<verb>` fluent chain attaches to any conforming or `Swift.Comparable` `Base`.
 
-`Order` is the root of an independent path within **Story 2 of the data-structures cohort** (`data-structures-launch-2026`): seven packages introducing typed indexing and sequences — **order**, index, sequence, collection, input, cyclic, vector. Story 1 (cardinal, ordinal, affine) shipped 2026-05-12. The two direct dependencies — ``Comparison_Primitives`` and ``Property_Primitives`` — are honest: removing either breaks the result-vs-rule split or the fluent-property attachment.
+The two direct dependencies — ``Comparison_Primitives`` and ``Property_Primitives`` — are both load-bearing: removing either breaks the result-vs-rule split or the fluent-property attachment.
 
 ## Topics
 

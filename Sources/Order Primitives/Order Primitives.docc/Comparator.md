@@ -47,15 +47,13 @@ The `.then(_:)` operator is short-circuit on a `.less` / `.greater` result from 
 
 ## Sendable and metatype captures
 
-`Order.Comparator` is `Sendable` unconditionally; the stored `compare` closure is `@Sendable` and the rest of the struct is value-typed. The static factories that bridge `Swift.Comparable` keys (`init()` over `Comparison.\`Protocol\``, `.by(_:)` for both `Comparison.\`Protocol\`` and `Swift.Comparable` keys, the `Swift.Comparable` `.ascending` path) capture a `T.Type` or `Value.Type` in their `@Sendable` closure. The compiler emits a `#SendableMetatypes` diagnostic at these sites; metatypes (`T.Type`) are pointers into read-only type metadata in the binary and are inherently thread-safe, but the type system does not yet distinguish "the metatype of `T`" (always safe) from "a value of type `T`" (may not be safe). Each site is annotated `nonisolated(unsafe) let _: T.Type = T.self` to document the intent.
-
-The three warning sites are listed and explained in `Audits/audit.md` under "Accepted Compiler Warnings — 2026-03-25". The warnings do not propagate into consumer builds.
+`Order.Comparator` is `Sendable` unconditionally; the stored `compare` closure is `@Sendable` and the rest of the struct is value-typed. The static factories that bridge `Swift.Comparable` keys (`init()` over `Comparison.\`Protocol\``, `.by(_:)` for both `Comparison.\`Protocol\`` and `Swift.Comparable` keys, the `Swift.Comparable` `.ascending` path) capture a `T.Type` or `Value.Type` in their `@Sendable` closure. The compiler emits a `#SendableMetatypes` diagnostic at these sites; metatypes (`T.Type`) are pointers into read-only type metadata in the binary and are inherently thread-safe, but the type system does not yet distinguish "the metatype of `T`" (always safe) from "a value of type `T`" (may not be safe). Each site is annotated `nonisolated(unsafe) let _: T.Type = T.self` to document the intent. The warnings do not propagate into consumer builds.
 
 ## `@inlinable` and performance
 
 Every method on `Order.Comparator` carries `@inlinable`. The intent is for the optimizer to dissolve the closure indirection at sites where the comparator is a compile-time-known `.ascending` / `.descending` or a closure literal, reducing the cost to the underlying `Comparison.\`Protocol\``'s `<`.
 
-0.1.0 establishes the API; benchmark characterization — comparator-vs-direct-`<`, `.then(_:)`-chain overhead, `Comparator.Partial` cost — lands in a follow-up. For tight inner loops today, reach for `Comparison.\`Protocol\`` directly rather than wrapping the natural ordering in a `Comparator`.
+For tight inner loops, reach for `Comparison.\`Protocol\`` directly rather than wrapping the natural ordering in a `Comparator`.
 
 ## See also
 

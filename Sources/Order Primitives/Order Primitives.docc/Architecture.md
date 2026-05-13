@@ -4,13 +4,11 @@
     @TitleHeading("Order Primitives")
 }
 
-The package's place in the data-structures cohort and the design rationale for its two products.
+The package's product layout and the design rationale for its surface.
 
 ## Overview
 
-`Order_Primitives` is an independent root within **Story 2 of the data-structures cohort** (`data-structures-launch-2026`): seven packages introducing typed indexing and sequences — **order**, index, sequence, collection, input, cyclic, vector. Story 1 (cardinal, ordinal, affine) shipped 2026-05-12; Story 2 builds the typed-indexing surface on top.
-
-Order has no internal cohort dependency — it depends only on `swift-comparison-primitives` and `swift-property-primitives`, both already-public Tier 0 primitives. Other Story 2 packages compose downstream of Order indirectly through their use of the Comparison / Order / Property trichotomy.
+`Order_Primitives` depends only on `swift-comparison-primitives` and `swift-property-primitives`. The package is self-contained on the trichotomy frame: it does not depend on any other typed-indexing primitive, and downstream packages compose it indirectly through their use of the Comparison / Order / Property split.
 
 ## Product layout
 
@@ -31,11 +29,11 @@ Three packages divide the labor of ordering values; each answers a distinct ques
 | **`swift-order-primitives`** (this package) | What is the *rule* that produces that result for a given pair? | `Order.Comparator<T>` with chaining / projection / reversal; `Order.Direction`; `Order.Projection<Root, Value>`; the `.order` fluent property |
 | `swift-property-primitives` | How does a fluent `.<verb>` chain attach to a value without forcing it into a protocol? | `Property<Tag, Base>` with `.Inout` for in-place predicates; `Order` is the phantom tag carried into `Property<Order, Self>.Inout` |
 
-The trichotomy is the load-bearing design decision. A reviewer asking "couldn't `Order.Comparator` live in `swift-comparison-primitives`?" is asking whether to merge the result and the rule into one package. Most code only needs one of the two: a sort routine takes a comparator, a tight inner loop takes a `Comparison.\`Protocol\``-conformant type. The split keeps imports honest about which one the call site actually needs.
+The trichotomy is the load-bearing design decision. Most code only needs one of the two: a sort routine takes a comparator, a tight inner loop takes a `Comparison.\`Protocol\``-conformant type. The split keeps imports honest about which one the call site actually needs.
 
 ## Dependency closure
 
-Two direct dependencies, both already-public Tier 0 primitives. Each is honest — removing either breaks a load-bearing piece of the surface:
+Two direct dependencies. Each is honest — removing either breaks a load-bearing piece of the surface:
 
 | Dependency | Why |
 |------------|-----|
@@ -44,22 +42,8 @@ Two direct dependencies, both already-public Tier 0 primitives. Each is honest �
 
 The umbrella re-exports `swift-comparison-primitives` (`@_exported public import Comparison_Primitives` in `exports.swift`). `swift-property-primitives` is imported `public import Property_Primitives` at the file scope where `Property.Inout` extensions are declared; consumers reach for it directly when they want to name `Property<Order, T>.Inout` in their own signatures.
 
-## Cohort siblings
-
-Story 2 narrows to seven packages (down from the original nine; `link` and `cyclic-index` were cut from the launch narrative for zero external consumers):
-
-- **order** — total / partial order modeling (this package)
-- index — typed positions
-- sequence — typed sequence protocol
-- collection — typed collection protocol
-- input — input/iteration adapters
-- cyclic — cyclic-buffer index variants
-- vector — typed vector arithmetic
-
-See `data-structures-launch-2026` for the cohort narrative. Order is the only Story 2 package that does not depend on Story 1's cardinal / ordinal / affine — the comparison trichotomy is its own subtree.
-
 ## Foundation-free, no platform conditionals
 
-The package is layer 1 (primitives). No `import Foundation`, no `#if os(…)` guards, no async / actor surface in `Sources/`. The only concurrency surface is the `@Sendable` constraint on the closures stored in `Order.Comparator` and `Order.Projection`; these are value-typed wrappers, not actors.
+No `import Foundation`, no `#if os(…)` guards, no async / actor surface in `Sources/`. The only concurrency surface is the `@Sendable` constraint on the closures stored in `Order.Comparator` and `Order.Projection`; these are value-typed wrappers, not actors.
 
-Embedded compatibility is heuristic-supported: the package has zero Foundation imports and zero concurrency-surface declarations in `Sources/`. First-party Embedded matrix runs post-flip via the centralized CI workflow.
+Swift Embedded is supported — the Wasm SDK build and Swift 6.4-dev nightly Embedded matrix both pass in CI.
