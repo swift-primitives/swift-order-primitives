@@ -24,6 +24,10 @@ let package = Package(
             targets: ["Order Direction Primitives"]
         ),
         .library(
+            name: "Order Monotonicity Primitives",
+            targets: ["Order Monotonicity Primitives"]
+        ),
+        .library(
             name: "Order Comparator Primitives",
             targets: ["Order Comparator Primitives"]
         ),
@@ -57,6 +61,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/swift-primitives/swift-comparison-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-property-primitives.git", branch: "main"),
+        .package(path: "../swift-pair-primitives"),
     ],
     targets: [
         // MARK: - Namespace
@@ -70,6 +75,13 @@ let package = Package(
             name: "Order Direction Primitives",
             dependencies: [
                 "Order Primitive",
+            ]
+        ),
+        .target(
+            name: "Order Monotonicity Primitives",
+            dependencies: [
+                "Order Primitive",
+                .product(name: "Pair Primitives", package: "swift-pair-primitives"),
             ]
         ),
         .target(
@@ -115,6 +127,7 @@ let package = Package(
             dependencies: [
                 "Order Primitive",
                 "Order Direction Primitives",
+                "Order Monotonicity Primitives",
                 "Order Comparator Primitives",
                 "Order Orderable Primitives",
                 "Order Projection Primitives",

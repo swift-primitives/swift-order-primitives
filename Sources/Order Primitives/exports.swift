@@ -11,6 +11,7 @@
 // implementation code.
 @_exported public import Order_Primitive
 @_exported public import Order_Direction_Primitives
+@_exported public import Order_Monotonicity_Primitives
 @_exported public import Order_Comparator_Primitives
 @_exported public import Order_Orderable_Primitives
 @_exported public import Order_Projection_Primitives
