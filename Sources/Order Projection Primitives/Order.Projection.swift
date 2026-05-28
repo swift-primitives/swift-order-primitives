@@ -7,6 +7,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+public import Comparison_Primitives
+public import Order_Direction_Primitives
+
 extension Order {
     /// A projection that extracts an orderable value from a root type.
     ///

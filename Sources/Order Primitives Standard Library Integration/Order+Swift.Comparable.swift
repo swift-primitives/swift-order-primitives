@@ -8,6 +8,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 public import Property_Primitives
+public import Order_Orderable_Primitives
 
 // MARK: - Property.Inout Extension for Swift.Comparable (Swift <6.4 only)
 //

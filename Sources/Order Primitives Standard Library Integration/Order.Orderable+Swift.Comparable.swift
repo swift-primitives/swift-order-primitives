@@ -7,6 +7,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+public import Order_Orderable_Primitives
+
 // MARK: - Order.Orderable Conformance for Integer Types
 
 /// Conformance for `Int` to `Order.Orderable`.

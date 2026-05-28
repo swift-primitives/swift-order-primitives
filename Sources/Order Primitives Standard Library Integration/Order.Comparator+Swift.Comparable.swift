@@ -8,6 +8,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 public import Comparison_Primitives
+public import Order_Comparator_Primitives
 
 // Pre-SE-0499 only. On Swift 6.4+ `Comparison.`Protocol`` is a typealias to
 // `Swift.Comparable` (per swift-comparison-primitives' Comparison.Protocol.swift);

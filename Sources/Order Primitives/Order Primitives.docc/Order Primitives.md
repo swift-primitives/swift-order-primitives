@@ -24,6 +24,7 @@ The two direct dependencies — ``Comparison_Primitives`` and ``Property_Primiti
 - <doc:Direction>
 - <doc:Order-and-Property>
 - <doc:Architecture>
+- <doc:Order-Scope>
 
 ### Namespace
 

@@ -7,6 +7,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+public import Comparison_Primitives
+
 extension Order.Comparator where T: ~Copyable {
     /// Returns a comparator that uses this comparator first, then the other
     /// comparator to break ties.
