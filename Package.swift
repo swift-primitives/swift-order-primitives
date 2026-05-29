@@ -61,7 +61,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/swift-primitives/swift-comparison-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-property-primitives.git", branch: "main"),
-        .package(path: "../swift-pair-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-pair-primitives.git", branch: "main"),
     ],
     targets: [
         // MARK: - Namespace
