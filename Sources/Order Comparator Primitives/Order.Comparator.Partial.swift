@@ -46,16 +46,19 @@ extension Order.Comparator {
             self.compare = compare
         }
 
-        /// Compares two values using this partial comparator.
-        ///
-        /// - Parameters:
-        ///   - lhs: The first value to compare.
-        ///   - rhs: The second value to compare.
-        /// - Returns: The comparison result indicating the relative order,
-        ///   or `nil` if the values are incomparable.
-        @inlinable
-        public func callAsFunction(_ lhs: borrowing T, _ rhs: borrowing T) -> Comparison? {
-            compare(lhs, rhs)
-        }
+    }
+}
+
+extension Order.Comparator.Partial {
+    /// Compares two values using this partial comparator.
+    ///
+    /// - Parameters:
+    ///   - lhs: The first value to compare.
+    ///   - rhs: The second value to compare.
+    /// - Returns: The comparison result indicating the relative order,
+    ///   or `nil` if the values are incomparable.
+    @inlinable
+    public func callAsFunction(_ lhs: borrowing T, _ rhs: borrowing T) -> Comparison? {
+        compare(lhs, rhs)
     }
 }

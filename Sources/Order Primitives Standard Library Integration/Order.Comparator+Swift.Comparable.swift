@@ -38,6 +38,9 @@ public import Order_Comparator_Primitives
         @_disfavoredOverload
         @inlinable
         public static var ascending: Order.Comparator<T> {
+            // SAFETY: `T.Type` is a metatype — a pointer into read-only type
+            // metadata, inherently Sendable. `#SendableMetatypes` cannot yet
+            // distinguish "metatype of T" (always safe) from a value of T.
             nonisolated(unsafe) let _: T.Type = T.self
             return Order.Comparator { lhs, rhs in
                 Comparison(comparing: lhs, to: rhs)
@@ -77,6 +80,9 @@ public import Order_Comparator_Primitives
         public static func by<Value: Swift.Comparable>(
             _ selector: @escaping @Sendable (borrowing T) -> Value
         ) -> Order.Comparator<T> {
+            // SAFETY: `Value.Type` is a metatype — a pointer into read-only type
+            // metadata, inherently Sendable. `#SendableMetatypes` cannot yet
+            // distinguish "metatype of Value" (always safe) from a value of Value.
             nonisolated(unsafe) let _: Value.Type = Value.self
             return Order.Comparator { lhs, rhs in
                 Comparison(comparing: selector(lhs), to: selector(rhs))

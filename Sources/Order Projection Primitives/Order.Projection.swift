@@ -65,23 +65,26 @@ extension Order {
             self.direction = direction
         }
 
-        /// Returns a projection with reversed direction.
-        ///
-        /// - `.ascending` becomes `.descending`
-        /// - `.descending` becomes `.ascending`
-        @inlinable
-        public var reversed: Self {
-            Self(extract, direction: direction.reversed)
-        }
+    }
+}
 
-        /// Converts this projection to a comparator.
-        ///
-        /// The resulting comparator extracts the value using this projection's
-        /// extractor and compares using the projection's direction.
-        @inlinable
-        public var comparator: Comparator<Root> {
-            let base = Comparator<Root>.by(extract)
-            return direction == .ascending ? base : base.reversed
-        }
+extension Order.Projection where Root: ~Copyable, Value: Comparison.`Protocol` & ~Copyable {
+    /// Returns a projection with reversed direction.
+    ///
+    /// - `.ascending` becomes `.descending`
+    /// - `.descending` becomes `.ascending`
+    @inlinable
+    public var reversed: Self {
+        Self(extract, direction: direction.reversed)
+    }
+
+    /// Converts this projection to a comparator.
+    ///
+    /// The resulting comparator extracts the value using this projection's
+    /// extractor and compares using the projection's direction.
+    @inlinable
+    public var comparator: Order.Comparator<Root> {
+        let base = Order.Comparator<Root>.by(extract)
+        return direction == .ascending ? base : base.reversed
     }
 }

@@ -25,16 +25,19 @@ extension Order {
         /// Larger values come first.
         case descending
 
-        /// Returns the opposite direction.
-        ///
-        /// - `.ascending` becomes `.descending`
-        /// - `.descending` becomes `.ascending`
-        @inlinable
-        public var reversed: Self {
-            switch self {
-            case .ascending: return .descending
-            case .descending: return .ascending
-            }
+    }
+}
+
+extension Order.Direction {
+    /// Returns the opposite direction.
+    ///
+    /// - `.ascending` becomes `.descending`
+    /// - `.descending` becomes `.ascending`
+    @inlinable
+    public var reversed: Self {
+        switch self {
+        case .ascending: return .descending
+        case .descending: return .ascending
         }
     }
 }

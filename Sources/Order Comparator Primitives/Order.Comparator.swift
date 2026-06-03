@@ -73,15 +73,18 @@ extension Order {
             self.compare = compare
         }
 
-        /// Compares two values using this comparator.
-        ///
-        /// - Parameters:
-        ///   - lhs: The first value to compare.
-        ///   - rhs: The second value to compare.
-        /// - Returns: The comparison result indicating the relative order.
-        @inlinable
-        public func callAsFunction(_ lhs: borrowing T, _ rhs: borrowing T) -> Comparison {
-            compare(lhs, rhs)
-        }
+    }
+}
+
+extension Order.Comparator where T: ~Copyable {
+    /// Compares two values using this comparator.
+    ///
+    /// - Parameters:
+    ///   - lhs: The first value to compare.
+    ///   - rhs: The second value to compare.
+    /// - Returns: The comparison result indicating the relative order.
+    @inlinable
+    public func callAsFunction(_ lhs: borrowing T, _ rhs: borrowing T) -> Comparison {
+        compare(lhs, rhs)
     }
 }
